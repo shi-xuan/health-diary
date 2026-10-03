@@ -9,162 +9,90 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="健康日誌">
+  <meta name="theme-color" content="#FFFDF8">
   <link rel="apple-touch-icon" href="https://img.icons8.com/parakeet/180/cute-clipart.png">
 
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for cute rounded handwriting feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg-cream: #FFFDF9;
-      --pink-soft: #FFCAD4;
-      --pink-crayon: #F4ACB7;
-      --pink-dark: #D87D8A;
-      --pink-light: #FFE5EC;
-      --green-soft: #D8E2DC;
-      --peach-soft: #FFE5D9;
-      --purple-soft: #E8DFF5;
-      --blue-soft: #D0F4DE;
-      --yellow-soft: #FFF1BD;
-      --text-main: #5D5452;
-      --text-muted: #8F8583;
-      --crayon-border: #E8C2B9;
-      --card-shadow: 0 4px 14px rgba(184, 155, 150, 0.15);
+      --crayon-bg: #FFFDF8;
+      --crayon-pink: #FFCAD4;
+      --crayon-green: #D8E2DC;
+      --crayon-yellow: #FFE5D9;
+      --crayon-purple: #E8DFF5;
+      --crayon-blue: #D0F4DE;
+      --crayon-text: #4A403A;
+      --crayon-border: #6B5B52;
     }
 
     * {
-      box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      box-sizing: border-box;
+      font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
     }
 
     body {
-      background-color: var(--bg-cream);
-      color: var(--text-main);
+      background-color: var(--crayon-bg);
+      color: var(--crayon-text);
+      user-select: none;
+      -webkit-user-select: none;
       overflow-x: hidden;
       min-height: 100vh;
-      user-select: none;
-    }
-
-    .safe-top {
-      padding-top: env(safe-area-inset-top, 24px);
-    }
-    .safe-bottom {
-      padding-bottom: env(safe-area-inset-bottom, 24px);
-    }
-
-    /* 容器架構 */
-    .view-container {
-      display: none;
-      min-height: 100vh;
-      width: 100%;
+      display: flex;
       flex-direction: column;
-      animation: fadeIn 0.22s ease-out;
-    }
-    .view-container.active {
-      display: flex;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
+    input, textarea, select {
+      user-select: text;
+      -webkit-user-select: text;
     }
 
-    /* ====== 畫面 1：首次建立帳戶 ====== */
-    #setup-view {
-      padding: 30px 22px;
-      justify-content: center;
-      align-items: center;
+    .safe-top { padding-top: env(safe-area-inset-top, 20px); }
+    .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 20px); }
+
+    /* Hand-drawn crayon border & shadow feel */
+    .crayon-card {
+      border: 2.5px solid #5A4D41;
+      border-radius: 26px 22px 28px 20px;
+      box-shadow: 4px 5px 0px #5A4D41;
+      transition: all 0.15s ease-in-out;
+      background-color: #FFFFFF;
+    }
+    .crayon-card:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px #5A4D41;
     }
 
-    .setup-card {
-      background: #FFFFFF;
-      border: 2px dashed var(--pink-crayon);
-      border-radius: 32px;
-      padding: 30px 22px;
-      width: 100%;
-      max-width: 380px;
-      box-shadow: var(--card-shadow);
+    .crayon-btn {
+      border: 2.5px solid #5A4D41;
+      border-radius: 9999px;
+      box-shadow: 2.5px 3px 0px #5A4D41;
+      font-weight: 700;
+      transition: all 0.1s ease-in-out;
       text-align: center;
-    }
-
-    .setup-title {
-      font-size: 23px;
-      font-weight: 800;
-      color: var(--pink-dark);
-      margin-bottom: 6px;
-    }
-
-    .setup-subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 22px;
-    }
-
-    .avatar-picker-wrap {
-      position: relative;
-      width: 92px;
-      height: 92px;
-      margin: 0 auto 20px auto;
-    }
-    .avatar-preview {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 3px solid var(--pink-soft);
-      background-color: var(--peach-soft);
-      box-shadow: 0 4px 10px rgba(244, 172, 183, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      overflow: hidden;
-    }
-    .avatar-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .avatar-camera-btn {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 32px;
-      height: 32px;
-      background: var(--pink-crayon);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      border: 2px solid white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
       cursor: pointer;
     }
-    .hidden-file-input { display: none; }
-
-    .form-group {
-      text-align: left;
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 13.5px;
-      font-weight: 700;
-      margin-bottom: 7px;
-      color: #6C5E5B;
+    .crayon-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0.5px 0.5px 0px #5A4D41;
     }
 
     .crayon-input {
-      width: 100% !important;
+      width: 100%;
       min-height: 48px;
       padding: 10px 16px;
-      border-radius: 16px;
-      border: 2px solid #F1D4CD;
+      border-radius: 20px;
+      border: 2px solid #5A4D41;
       background-color: #FFFDF9;
       font-size: 15px;
-      color: var(--text-main);
+      font-weight: 600;
+      color: var(--crayon-text);
       outline: none;
       box-sizing: border-box;
       display: flex;
@@ -172,435 +100,120 @@
       cursor: pointer;
     }
     .crayon-input:focus {
-      border-color: var(--pink-crayon);
       background-color: #FFFFFF;
+      box-shadow: 0 0 0 2px var(--crayon-pink);
     }
 
-    .gender-chips {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .gender-chip-btn {
-      padding: 10px 4px;
-      border-radius: 16px;
-      border: 2px solid #F1D4CD;
-      background: #FFFDF9;
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--text-main);
-      cursor: pointer;
-      text-align: center;
-    }
-    .gender-chip-btn.selected {
-      background-color: var(--pink-soft);
-      border-color: var(--pink-crayon);
-      color: #9C4153;
-    }
-
-    .btn-crayon-primary {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #F4ACB7, #FFCAD4);
-      color: #692A37;
-      border: none;
-      border-radius: 22px;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(244, 172, 183, 0.4);
-      margin-top: 10px;
-    }
-    .btn-crayon-primary:active {
-      transform: scale(0.98);
-    }
-
-    /* ====== 畫面 2：主頁首頁 ====== */
-    #dashboard-view {
-      padding: 16px 18px 40px 18px;
-    }
-
-    .dash-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .dash-profile {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .dash-avatar {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background: var(--peach-soft);
-      border: 3px solid var(--pink-soft);
-      overflow: hidden;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
-    }
-    .dash-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .dash-greeting {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--text-main); /* 還原第一版顏色 */
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .dash-greeting .heart-icon {
-      color: #F4ACB7;
-      font-size: 18px;
-    }
-    .dash-tagline {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 3px;
-    }
-    .gear-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: white;
-      border: 2px solid #EFE4E1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: #8C7B79;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-    }
-
-    .section-headline {
-      font-size: 16px;
-      font-weight: 800;
-      color: #796A68;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .section-headline::before {
-      content: "";
-      width: 4px;
-      height: 16px;
-      background: var(--pink-crayon);
-      border-radius: 4px;
-    }
-
-    /* ====== 6 本日誌本：還原第一版邊框與質感＋保留孔洞 ====== */
-    .books-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-
-    .notebook-card {
+    /* Book 3D spine effect for the 6 book icons with HOLES */
+    .book-spine {
       position: relative;
-      border-radius: 20px;
-      padding: 16px 14px 16px 28px;
-      min-height: 136px;
+      overflow: hidden;
+      border-radius: 22px 18px 20px 18px;
+      padding-left: 28px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      cursor: pointer;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.12s, box-shadow 0.12s;
-      overflow: hidden;
+      min-height: 136px;
     }
-    .notebook-card:active {
-      transform: scale(0.97);
-    }
-
-    /* 書脊打孔裝訂邊 */
-    .notebook-card::before {
+    .book-spine::before {
       content: '';
       position: absolute;
-      top: 0;
       left: 0;
-      width: 18px;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.05);
-      border-right: 2px dashed rgba(255, 255, 255, 0.6);
+      top: 0;
+      bottom: 0;
+      width: 20px;
+      background: rgba(0, 0, 0, 0.06);
+      border-right: 2px dashed rgba(90, 77, 65, 0.4);
     }
     .notebook-ring {
       position: absolute;
       left: 6px;
-      width: 7px;
-      height: 12px;
+      width: 8px;
+      height: 14px;
       background: #FFFFFF;
+      border: 2px solid #5A4D41;
       border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.22);
+      box-shadow: 1px 1px 0px #5A4D41;
     }
-    .ring-1 { top: 20px; }
-    .ring-2 { top: calc(50% - 6px); }
-    .ring-3 { bottom: 20px; }
+    .ring-1 { top: 22px; }
+    .ring-2 { top: calc(50% - 7px); }
+    .ring-3 { bottom: 22px; }
 
-    /* 6 本書第一版邊框手繪風格 */
-    .book-period { background: linear-gradient(145deg, #FFE5EC, #FFCAD4); border: 2px solid #F4ACB7; }
-    .book-report { background: linear-gradient(145deg, #EBF4F6, #D8E2DC); border: 2px solid #A8C9B9; }
-    .book-supple { background: linear-gradient(145deg, #FFF1E6, #FFE5D9); border: 2px solid #F7C59F; }
-    .book-sport  { background: linear-gradient(145deg, #E8F8F5, #D0F4DE); border: 2px solid #99E2B4; }
-    .book-diary  { background: linear-gradient(145deg, #F3EAF8, #E8DFF5); border: 2px solid #CDB4DB; }
-    .book-alarm  { background: linear-gradient(145deg, #FFF7D6, #FFEAA7); border: 2px solid #FCD34D; }
+    /* Custom smooth scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #D6C7BE; border-radius: 10px; }
+    
+    .view-container {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .view-container.active { display: flex; }
 
-    .notebook-icon {
-      font-size: 32px;
-    }
-    .notebook-title {
-      font-size: 16.5px;
-      font-weight: 800;
-      color: #4A3E3D;
-      margin-top: 6px;
-    }
-    .notebook-sub {
-      font-size: 11px;
-      color: #7A6967;
-      margin-top: 2px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* ====== 側邊選單 (2/3 寬度) ====== */
     .sidebar-mask {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(40, 30, 30, 0.45);
-      z-index: 998;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.28s ease;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(40, 30, 30, 0.45); z-index: 998; opacity: 0;
+      pointer-events: none; transition: opacity 0.28s ease;
     }
-    .sidebar-mask.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .sidebar-mask.show { opacity: 1; pointer-events: auto; }
 
     .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 66.6%;
-      max-width: 320px;
-      height: 100%;
-      background: #FFFDF9;
-      box-shadow: 4px 0 25px rgba(0,0,0,0.18);
-      z-index: 999;
-      transform: translateX(-100%);
-      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      flex-direction: column;
-      border-right: 2px solid #F1E5E2;
+      position: fixed; top: 0; left: 0; width: 66.6%; max-width: 320px; height: 100%;
+      background: var(--crayon-bg); border-right: 3px solid #5A4D41;
+      box-shadow: 4px 0 25px rgba(0,0,0,0.18); z-index: 999;
+      transform: translateX(-100%); transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column;
     }
-    .sidebar.open {
-      transform: translateX(0);
-    }
+    .sidebar.open { transform: translateX(0); }
     .sidebar-header {
       padding: calc(env(safe-area-inset-top, 24px) + 16px) 18px 18px 18px;
-      background: linear-gradient(135deg, #FFE5EC, #FFFDF9);
-      border-bottom: 2px dashed #E8D3CE;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      background: var(--crayon-pink); border-bottom: 3px dashed #5A4D41;
+      display: flex; align-items: center; gap: 12px;
     }
     .sidebar-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--peach-soft);
-      border: 2px solid var(--pink-crayon);
-      overflow: hidden;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
+      width: 48px; height: 48px; border-radius: 50%; background: #FFF;
+      border: 2.5px solid #5A4D41; overflow: hidden; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
     }
     .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .sidebar-name { font-size: 16px; font-weight: 800; color: #4A3E3D; }
-    .sidebar-menu {
-      flex: 1;
-      padding: 16px 12px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    
+    .sidebar-menu { flex: 1; padding: 16px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
     .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      font-size: 14.5px;
-      font-weight: 700;
-      color: #5D504E;
-      cursor: pointer;
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      border-radius: 16px; font-size: 16px; font-weight: 700; color: #5A4D41; cursor: pointer;
     }
-    .sidebar-item:active { background: #F8ECE9; color: #9C4153; }
-    .sidebar-footer {
-      padding: 16px;
-      border-top: 1px solid #EFE4E1;
-      margin-bottom: env(safe-area-inset-bottom, 16px);
-    }
+    .sidebar-item:active { background: rgba(90, 77, 65, 0.08); }
+    
+    .sidebar-footer { padding: 16px; border-top: 2.5px solid #5A4D41; margin-bottom: env(safe-area-inset-bottom, 16px); }
 
-    /* ====== 獨立頁面共用 Header & Card ====== */
-    .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      border-bottom: 1.5px solid #F1E5E2;
-      background: #FFFDF9;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .header-btn {
-      background: none;
-      border: none;
-      font-size: 22px;
-      color: #6C5D5B;
-      cursor: pointer;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .page-title { font-size: 17px; font-weight: 800; color: #4A3E3D; }
-    .page-content { padding: 18px; flex: 1; }
-
-    .card-box {
-      background: white;
-      border-radius: 20px;
-      padding: 18px;
-      border: 1.5px solid #F1E5E2;
-      box-shadow: var(--card-shadow);
-      margin-bottom: 16px;
-    }
-    .card-title {
-      font-size: 15.5px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      color: #5D4D4B;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* ====== 可愛生日彈窗 ====== */
+    /* ====== 彈窗遮罩 ====== */
     .modal-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.45);
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5); z-index: 1000; display: none;
+      align-items: center; justify-content: center; padding: 20px;
     }
     .modal-backdrop.show { display: flex; }
-    .crayon-modal {
-      background: #FFFDF9;
-      border: 3px solid var(--pink-crayon);
-      border-radius: 28px;
-      padding: 22px;
-      width: 100%;
-      max-width: 340px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-      text-align: center;
+    .crayon-modal-box {
+      background: var(--crayon-bg); border: 3px solid #5A4D41; border-radius: 28px;
+      padding: 24px; width: 100%; max-width: 340px; box-shadow: 6px 8px 0px #5A4D41; text-align: center;
     }
-    .modal-title { font-size: 18px; font-weight: 800; color: var(--pink-dark); margin-bottom: 14px; }
-    .bday-selectors { display: flex; gap: 8px; margin-bottom: 18px; }
-    .bday-select {
-      flex: 1;
-      padding: 10px;
-      border-radius: 14px;
-      border: 2px solid #F1D4CD;
-      background: white;
-      font-size: 14px;
-      font-weight: 600;
-      color: #5D5452;
-      outline: none;
-    }
-
+    
     /* ====== 宮廷月誌專用日曆網格 ====== */
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
-      text-align: center;
-      margin-top: 10px;
-    }
-    .cal-header { font-size: 11px; font-weight: 700; color: #8F8583; padding: 4px 0; }
-    .cal-day {
-      aspect-ratio: 1;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: #5D5452;
-    }
-    .cal-day.period { background: #FFAAA6; color: white; border-radius: 50%; }
-    .cal-day.ovulation { background: #D0F4DE; color: #1E4E30; border: 1px dashed #7AD8A6; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; margin-top: 10px; }
+    .cal-header { font-size: 12px; font-weight: 700; color: #8A7968; padding: 4px 0; }
+    .cal-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #5A4D41; }
+    .cal-day.period { background: #FFCAD4; border: 2px solid #5A4D41; border-radius: 50%; }
+    .cal-day.ovulation { background: #D0F4DE; border: 2px dashed #5A4D41; }
 
-    /* ====== 喝水進度杯視覺 ====== */
-    .water-row {
-      display: flex;
-      justify-content: space-between;
-      margin: 12px 0;
-    }
-    .water-cup {
-      font-size: 26px;
-      cursor: pointer;
-      opacity: 0.35;
-      transition: transform 0.15s, opacity 0.15s;
-    }
-    .water-cup.drank { opacity: 1; transform: scale(1.1); }
-
-    /* 設定頁面按鈕 */
-    .btn-secondary {
-      width: 100%;
-      padding: 13px;
-      background: #FFFFFF;
-      border: 2px solid var(--pink-soft);
-      border-radius: 18px;
-      font-size: 14.5px;
-      font-weight: 700;
-      color: #8C4755;
-      cursor: pointer;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .btn-secondary:active { background: #FFF5F7; }
-    .btn-danger {
-      border-color: #FFAAA6;
-      color: #D9383A;
-      background: #FFFBFB;
-    }
-    .btn-danger:active { background: #FFEBEB; }
+    .water-cup { font-size: 28px; cursor: pointer; opacity: 0.35; transition: transform 0.15s, opacity 0.15s; }
+    .water-cup.drank { opacity: 1; transform: scale(1.15) rotate(5deg); }
   </style>
 </head>
 <body class="safe-top safe-bottom">
@@ -612,488 +225,376 @@
   <nav id="sidebar" class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-avatar" id="sidebar-avatar-box">🌸</div>
-      <div class="sidebar-name" id="sidebar-user-name">暱稱寶寶</div>
+      <div class="sidebar-name font-black text-[#5A4D41] text-lg" id="sidebar-user-name">寶寶</div>
     </div>
     <div class="sidebar-menu">
-      <div class="sidebar-item" onclick="navigateTo('dashboard-view')">
-        <span>🏠</span> 首頁
-      </div>
-      <div class="sidebar-item" onclick="navigateTo('view-period')">
-        <span>🌸</span> 宮廷月誌
-      </div>
-      <div class="sidebar-item" onclick="navigateTo('view-report')">
-        <span>📋</span> 健檢報告
-      </div>
-      <div class="sidebar-item" onclick="navigateTo('view-supple')">
-        <span>💊</span> 保健品指南
-      </div>
-      <div class="sidebar-item" onclick="navigateTo('view-sport')">
-        <span>🏃‍♀️</span> 循身而動
-      </div>
-      <div class="sidebar-item" onclick="navigateTo('view-diary')">
-        <span>📖</span> 微光時刻
-      </div>
-      <div class="sidebar-item" onclick="navigateTo('view-alarm')">
-        <span>⏰</span> 小鬧鐘
-      </div>
+      <div class="sidebar-item" onclick="navigateTo('dashboard-view')"><span>🏠</span> 首頁</div>
+      <div class="sidebar-item" onclick="navigateTo('view-period')"><span>🌸</span> 宮廷月誌</div>
+      <div class="sidebar-item" onclick="navigateTo('view-report')"><span>📋</span> 健檢報告</div>
+      <div class="sidebar-item" onclick="navigateTo('view-supple')"><span>💊</span> 保健品指南</div>
+      <div class="sidebar-item" onclick="navigateTo('view-sport')"><span>🏃‍♀️</span> 循身而動</div>
+      <div class="sidebar-item" onclick="navigateTo('view-diary')"><span>📖</span> 微光時刻</div>
+      <div class="sidebar-item" onclick="navigateTo('view-alarm')"><span>⏰</span> 小鬧鐘</div>
     </div>
     <div class="sidebar-footer">
-      <div class="sidebar-item" onclick="navigateTo('view-settings')">
-        <span>⚙️️</span> 系統設定
-      </div>
+      <div class="sidebar-item" onclick="navigateTo('view-settings')"><span>⚙️</span> 系統設定</div>
     </div>
   </nav>
 
   <!-- 可愛生日挑選器彈窗 -->
   <div id="birthday-modal" class="modal-backdrop">
-    <div class="crayon-modal">
-      <div class="modal-title">🎂 選擇出生年月日</div>
-      <div class="bday-selectors">
-        <select id="bday-year" class="bday-select"></select>
-        <select id="bday-month" class="bday-select"></select>
-        <select id="bday-day" class="bday-select"></select>
+    <div class="crayon-modal-box">
+      <div class="text-xl font-black text-[#5A4D41] mb-4">🎂 選擇生日</div>
+      <div class="flex gap-2 mb-5">
+        <select id="bday-year" class="flex-1 p-2 rounded-xl border-2 border-[#5A4D41] bg-white font-bold text-[#5A4D41] outline-none"></select>
+        <select id="bday-month" class="flex-1 p-2 rounded-xl border-2 border-[#5A4D41] bg-white font-bold text-[#5A4D41] outline-none"></select>
+        <select id="bday-day" class="flex-1 p-2 rounded-xl border-2 border-[#5A4D41] bg-white font-bold text-[#5A4D41] outline-none"></select>
       </div>
-      <button class="btn-crayon-primary" onclick="confirmBirthday()">選好囉 ✨</button>
+      <button class="crayon-btn bg-[#FFCAD4] text-[#5A4D41] w-full py-3 text-lg" onclick="confirmBirthday()">選好囉 ✨</button>
     </div>
   </div>
 
-  <!-- 修改個人檔案彈窗（非重設） -->
+  <!-- 修改個人檔案彈窗 -->
   <div id="edit-profile-modal" class="modal-backdrop">
-    <div class="crayon-modal" style="max-width: 360px;">
-      <div class="modal-title">✏️ 修改個人檔案</div>
-      <div class="avatar-picker-wrap" onclick="document.getElementById('edit-avatar-input').click()">
-        <div class="avatar-preview" id="edit-avatar-preview"><span>🌸</span></div>
-        <div class="avatar-camera-btn">📷</div>
+    <div class="crayon-modal-box" style="padding: 20px;">
+      <div class="text-lg font-black text-[#5A4D41] mb-3">✏️ 修改個人檔案</div>
+      <div class="relative w-20 h-20 mx-auto mb-4 cursor-pointer" onclick="document.getElementById('edit-avatar-input').click()">
+        <div class="w-full h-full rounded-full border-2 border-[#5A4D41] bg-[#FFCAD4] flex items-center justify-center text-3xl overflow-hidden" id="edit-avatar-preview">🌸</div>
+        <div class="absolute bottom-0 right-0 w-7 h-7 bg-[#FFF1BD] border-2 border-[#5A4D41] rounded-full flex items-center justify-center text-xs shadow-sm">📷</div>
       </div>
-      <input type="file" id="edit-avatar-input" class="hidden-file-input" accept="image/*">
+      <input type="file" id="edit-avatar-input" class="hidden" accept="image/*">
 
-      <div class="form-group">
-        <label>暱稱</label>
+      <div class="text-left mb-3">
+        <label class="block text-sm font-bold text-[#5A4D41] mb-1">暱稱</label>
         <input type="text" id="edit-name" class="crayon-input">
       </div>
-      <div class="form-group">
-        <label>生日</label>
+      <div class="text-left mb-3">
+        <label class="block text-sm font-bold text-[#5A4D41] mb-1">生日</label>
         <div class="crayon-input" id="edit-bday-display" onclick="openBirthdayPicker(true)">點擊設定生日 🎂</div>
       </div>
-      <div class="form-group">
-        <label>性別</label>
-        <div class="gender-chips">
-          <div class="gender-chip-btn" id="edit-gender-female" onclick="selectEditGender('女')">女生 🌸</div>
-          <div class="gender-chip-btn" id="edit-gender-male" onclick="selectEditGender('男')">男生 🌱</div>
-          <div class="gender-chip-btn" id="edit-gender-secret" onclick="selectEditGender('秘')">保密 🌿</div>
+      <div class="text-left mb-4">
+        <label class="block text-sm font-bold text-[#5A4D41] mb-1">性別</label>
+        <div class="flex gap-2">
+          <div class="flex-1 py-2 text-center text-sm font-bold rounded-xl border-2 border-[#5A4D41] cursor-pointer" id="edit-gender-female" onclick="selectEditGender('女')">女生 🌸</div>
+          <div class="flex-1 py-2 text-center text-sm font-bold rounded-xl border-2 border-[#5A4D41] cursor-pointer" id="edit-gender-male" onclick="selectEditGender('男')">男生 🌱</div>
+          <div class="flex-1 py-2 text-center text-sm font-bold rounded-xl border-2 border-[#5A4D41] cursor-pointer" id="edit-gender-secret" onclick="selectEditGender('秘')">保密 🌿</div>
         </div>
       </div>
-      <div style="display: flex; gap: 10px; margin-top: 14px;">
-        <button class="btn-secondary" style="flex: 1;" onclick="closeEditModal()">取消</button>
-        <button class="btn-crayon-primary" style="flex: 1.5; margin-top: 0;" onclick="saveEditedProfile()">儲存變更</button>
+      <div class="flex gap-3">
+        <button class="crayon-btn bg-white w-full py-2" onclick="closeEditModal()">取消</button>
+        <button class="crayon-btn bg-[#FFCAD4] w-full py-2" onclick="saveEditedProfile()">儲存</button>
       </div>
     </div>
   </div>
 
-  <!-- ================= VIEW 1：首次建立用戶 ================= -->
-  <div id="setup-view" class="view-container">
-    <div class="setup-card">
-      <div class="avatar-picker-wrap" onclick="document.getElementById('avatar-file-input').click()">
-        <div class="avatar-preview" id="setup-avatar-preview">
-          <span>🌸</span>
+  <div id="app" class="w-full max-w-md mx-auto min-h-screen flex flex-col relative px-4 pb-12 pt-3">
+    
+    <!-- ================= VIEW 1：首次建立用戶 ================= -->
+    <div id="setup-view" class="view-container flex-1 justify-center py-6">
+      <div class="crayon-card bg-[#FFFDF9] p-6 text-center space-y-4">
+        <div class="relative w-24 h-24 mx-auto mb-2 cursor-pointer" onclick="document.getElementById('avatar-file-input').click()">
+          <div class="w-full h-full rounded-full border-2 border-[#5A4D41] bg-[#FFCAD4] flex items-center justify-center text-4xl shadow-inner overflow-hidden" id="setup-avatar-preview">🌸</div>
+          <div class="absolute bottom-0 right-0 w-8 h-8 bg-[#FFF1BD] border-2 border-[#5A4D41] rounded-full flex items-center justify-center text-sm shadow-[1.5px_2px_0_#5A4D41]">📷</div>
         </div>
-        <div class="avatar-camera-btn">📷</div>
-      </div>
-      <input type="file" id="avatar-file-input" class="hidden-file-input" accept="image/*">
+        <input type="file" id="avatar-file-input" class="hidden" accept="image/*">
 
-      <h1 class="setup-title">開啟Health-diary守護你</h1>
-      <p class="setup-subtitle">打開健康日誌 照顧好自己</p>
+        <h1 class="text-2xl font-black text-[#5A4D41] tracking-wide">開啟Health-diary守護你</h1>
+        <p class="text-sm font-bold text-[#8A7968]">打開健康日誌 照顧好自己</p>
 
-      <div class="form-group">
-        <label>你的暱稱</label>
-        <input type="text" id="setup-name" class="crayon-input" autocomplete="off">
-      </div>
-
-      <div class="form-group">
-        <label>你的生日</label>
-        <div class="crayon-input" id="bday-display" onclick="openBirthdayPicker(false)">點擊選擇生日 🎂</div>
-      </div>
-
-      <div class="form-group">
-        <label>性別（輔助週期運算）</label>
-        <div class="gender-chips">
-          <div class="gender-chip-btn selected" onclick="selectGender(this, '女')">女生 🌸</div>
-          <div class="gender-chip-btn" onclick="selectGender(this, '男')">男生 🌱</div>
-          <div class="gender-chip-btn" onclick="selectGender(this, '秘')">保密 🌿</div>
-        </div>
-      </div>
-
-      <button class="btn-crayon-primary" onclick="completeSetup()">開始我的健康旅程 ✨</button>
-    </div>
-  </div>
-
-  <!-- ================= VIEW 2：主儀表板 ================= -->
-  <div id="dashboard-view" class="view-container">
-    <div class="dash-topbar">
-      <div class="dash-profile">
-        <div class="dash-avatar" id="dash-avatar-box">🌸</div>
-        <div class="dash-welcome">
-          <!-- 暱稱還原第一版色調＋加愛心 -->
-          <div class="dash-greeting">
-            <span id="dash-greeting-text">Hi 寶寶</span>
-            <span class="heart-icon">💕</span>
+        <div class="space-y-4 text-left pt-2">
+          <div>
+            <label class="block text-sm font-bold text-[#5A4D41] mb-1">你的暱稱 ✨</label>
+            <input type="text" id="setup-name" class="crayon-input" autocomplete="off">
           </div>
-          <div class="dash-tagline">今天也要好好照顧身體喔 🌱</div>
-        </div>
-      </div>
-      <div class="gear-btn" onclick="navigateTo('view-settings')">⚙️</div>
-    </div>
-
-    <div class="section-headline">我的Health-diary</div>
-
-    <!-- 6 本書（第一版邊框手繪風格＋保留孔洞） -->
-    <div class="books-grid">
-      <!-- 1. 生理期 -->
-      <div class="notebook-card book-period" onclick="navigateTo('view-period')">
-        <div class="notebook-ring ring-1"></div>
-        <div class="notebook-ring ring-2"></div>
-        <div class="notebook-ring ring-3"></div>
-        <div class="notebook-icon">🌸</div>
-        <div>
-          <div class="notebook-title">宮廷月誌</div>
-          <div class="notebook-sub">生理週期與排卵推算</div>
-        </div>
-      </div>
-
-      <!-- 2. 健檢報告 -->
-      <div class="notebook-card book-report" onclick="navigateTo('view-report')">
-        <div class="notebook-ring ring-1"></div>
-        <div class="notebook-ring ring-2"></div>
-        <div class="notebook-ring ring-3"></div>
-        <div class="notebook-icon">📋</div>
-        <div>
-          <div class="notebook-title">健檢報告</div>
-          <div class="notebook-sub">歷年檢查與視力追蹤</div>
-        </div>
-      </div>
-
-      <!-- 3. 保健品 -->
-      <div class="notebook-card book-supple" onclick="navigateTo('view-supple')">
-        <div class="notebook-ring ring-1"></div>
-        <div class="notebook-ring ring-2"></div>
-        <div class="notebook-ring ring-3"></div>
-        <div class="notebook-icon">💊</div>
-        <div>
-          <div class="notebook-title">保健品指南</div>
-          <div class="notebook-sub">每日清單與打卡紀錄</div>
-        </div>
-      </div>
-
-      <!-- 4. 運動 -->
-      <div class="notebook-card book-sport" onclick="navigateTo('view-sport')">
-        <div class="notebook-ring ring-1"></div>
-        <div class="notebook-ring ring-2"></div>
-        <div class="notebook-ring ring-3"></div>
-        <div class="notebook-icon">🏃‍♀️</div>
-        <div>
-          <div class="notebook-title">循身而動</div>
-          <div class="notebook-sub">活力鍛鍊與汗水日記</div>
-        </div>
-      </div>
-
-      <!-- 5. 日記 -->
-      <div class="notebook-card book-diary" onclick="navigateTo('view-diary')">
-        <div class="notebook-ring ring-1"></div>
-        <div class="notebook-ring ring-2"></div>
-        <div class="notebook-ring ring-3"></div>
-        <div class="notebook-icon">📖</div>
-        <div>
-          <div class="notebook-title">微光時刻</div>
-          <div class="notebook-sub">心情小語與今日碎碎念</div>
-        </div>
-      </div>
-
-      <!-- 6. 小鬧鐘 -->
-      <div class="notebook-card book-alarm" onclick="navigateTo('view-alarm')">
-        <div class="notebook-ring ring-1"></div>
-        <div class="notebook-ring ring-2"></div>
-        <div class="notebook-ring ring-3"></div>
-        <div class="notebook-icon">⏰</div>
-        <div>
-          <div class="notebook-title">小鬧鐘</div>
-          <div class="notebook-sub">喝水、眼休與按時吃藥</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= 獨立分頁 1：宮廷月誌 ================= -->
-  <div id="view-period" class="view-container">
-    <div class="page-header">
-      <button class="header-btn" onclick="openSidebar()">☰</button>
-      <div class="page-title">🌸 宮廷月誌</div>
-      <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
-    </div>
-    <div class="page-content">
-      <div class="card-box">
-        <div class="card-title">📅 本月週期推算日曆</div>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">
-          ● 粉紅：月經期 ● 淺綠：排卵危險期
-        </p>
-        <div class="calendar-grid">
-          <div class="cal-header">日</div><div class="cal-header">一</div><div class="cal-header">二</div>
-          <div class="cal-header">三</div><div class="cal-header">四</div><div class="cal-header">五</div><div class="cal-header">六</div>
-          
-          <div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div>
-          <div class="cal-day period">5</div><div class="cal-day period">6</div><div class="cal-day period">7</div>
-          <div class="cal-day period">8</div><div class="cal-day period">9</div><div class="cal-day">10</div><div class="cal-day">11</div>
-          <div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day">15</div>
-          <div class="cal-day ovulation">16</div><div class="cal-day ovulation">17</div><div class="cal-day ovulation">18</div>
-          <div class="cal-day ovulation">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
-          <div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div>
-          <div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
-        </div>
-        <button class="btn-crayon-primary" style="margin-top: 14px;" onclick="alert('🩸 今日月經來訪打卡成功！')">今天月經來了 🩸</button>
-      </div>
-
-      <div class="card-box">
-        <div class="card-title">🩺 體感症狀勾選</div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <span style="background: #FFE5EC; padding: 6px 12px; border-radius: 12px; font-size: 13px;">腹部悶痛</span>
-          <span style="background: #FFF1E6; padding: 6px 12px; border-radius: 12px; font-size: 13px;">腰痠</span>
-          <span style="background: #E8DFF5; padding: 6px 12px; border-radius: 12px; font-size: 13px;">胸脹</span>
-          <span style="background: #D8E2DC; padding: 6px 12px; border-radius: 12px; font-size: 13px;">食慾大增</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= 獨立分頁 2：健檢報告 ================= -->
-  <div id="view-report" class="view-container">
-    <div class="page-header">
-      <button class="header-btn" onclick="openSidebar()">☰</button>
-      <div class="page-title">📋 健檢報告</div>
-      <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
-    </div>
-    <div class="page-content">
-      <div class="card-box">
-        <div class="card-title">👀 視力追蹤專區</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-          <div style="background: #F9FAF9; padding: 12px; border-radius: 16px; text-align: center; border: 1.5px solid #E5EBE8;">
-            <div style="font-size: 12px; color: var(--text-muted);">左眼 (L) 裸視/散光</div>
-            <div style="font-size: 20px; font-weight: 800; color: #4A3E3D; margin-top: 4px;">1.0 / 50°</div>
+          <div>
+            <label class="block text-sm font-bold text-[#5A4D41] mb-1">你的生日 🎂</label>
+            <div class="crayon-input" id="bday-display" onclick="openBirthdayPicker(false)">點擊選擇生日 🎂</div>
           </div>
-          <div style="background: #F9FAF9; padding: 12px; border-radius: 16px; text-align: center; border: 1.5px solid #E5EBE8;">
-            <div style="font-size: 12px; color: var(--text-muted);">右眼 (R) 裸視/散光</div>
-            <div style="font-size: 20px; font-weight: 800; color: #4A3E3D; margin-top: 4px;">0.9 / 75°</div>
+          <div>
+            <label class="block text-sm font-bold text-[#5A4D41] mb-1">性別（輔助週期運算）</label>
+            <div class="flex gap-2" id="setup-gender-wrap">
+              <div class="flex-1 py-2 text-center text-sm font-bold rounded-xl border-2 border-[#5A4D41] bg-[#FFCAD4] shadow-[2px_2px_0_#5A4D41] cursor-pointer" onclick="selectGender(this, '女')">女生 🌸</div>
+              <div class="flex-1 py-2 text-center text-sm font-bold rounded-xl border-2 border-[#5A4D41] bg-white cursor-pointer" onclick="selectGender(this, '男')">男生 🌱</div>
+              <div class="flex-1 py-2 text-center text-sm font-bold rounded-xl border-2 border-[#5A4D41] bg-white cursor-pointer" onclick="selectGender(this, '秘')">保密 🌿</div>
+            </div>
+          </div>
+          <button class="w-full py-3.5 mt-2 crayon-btn bg-[#FFCAD4] text-[#5A4D41] text-lg" onclick="completeSetup()">開始我的健康旅程 ✨</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 2：主儀表板 ================= -->
+    <div id="dashboard-view" class="view-container flex-1">
+      <header class="flex items-center justify-between pt-2 mb-5">
+        <div class="flex items-center space-x-3">
+          <div class="w-14 h-14 rounded-full border-2 border-[#5A4D41] bg-[#FFCAD4] flex items-center justify-center text-3xl shadow-[2px_3px_0_#5A4D41] overflow-hidden" id="dash-avatar-box">🌸</div>
+          <div>
+            <div class="flex items-baseline space-x-1">
+              <span class="text-xl font-black text-[#5A4D41]">Hi</span>
+              <span id="dash-greeting-text" class="text-xl font-black text-[#5A4D41]">寶寶</span>
+              <span class="text-lg text-[#F4ACB7]">💕</span>
+            </div>
+            <p class="text-xs font-bold text-[#7A6A5C] mt-0.5">今天也要好好照顧身體喔 🌱</p>
           </div>
         </div>
-        <button class="btn-crayon-primary" style="background: linear-gradient(135deg, #D8E2DC, #C1D5CB); color: #2C4236;" onclick="alert('視力已儲存紀錄！')">更新視力數據</button>
-      </div>
+        <button onclick="navigateTo('view-settings')" class="w-11 h-11 crayon-btn bg-white flex items-center justify-center text-xl hover:bg-amber-50 active:scale-95" aria-label="設定">⚙️</button>
+      </header>
 
-      <div class="card-box">
-        <div class="card-title">📑 歷年重要指標</div>
-        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
-          <div style="display: flex; justify-content: space-between; padding-bottom: 6px; border-bottom: 1px dashed #EFE4E1;">
-            <span>血壓 (收縮/舒張)</span>
-            <strong>110 / 72 mmHg</strong>
+      <h2 class="text-base font-black text-[#5A4D41] mb-3 flex items-center">
+        <div class="w-1.5 h-4 bg-[#FFCAD4] border border-[#5A4D41] rounded-full mr-2"></div> 我的Health-diary
+      </h2>
+
+      <!-- 6 本書（第一版邊框與孔洞） -->
+      <div class="grid grid-cols-2 gap-3.5">
+        <div onclick="navigateTo('view-period')" class="book-spine crayon-card bg-[#FFCAD4] cursor-pointer">
+          <div class="notebook-ring ring-1"></div><div class="notebook-ring ring-2"></div><div class="notebook-ring ring-3"></div>
+          <div class="pt-3"><span class="text-3xl">🌸</span></div>
+          <div class="pb-3 pr-2">
+            <h3 class="font-black text-[15px] text-[#4E383C]">宮廷月誌</h3>
+            <p class="text-[10px] font-bold text-[#7A5B61] mt-0.5">生理週期與排卵推算</p>
           </div>
-          <div style="display: flex; justify-content: space-between; padding-bottom: 6px; border-bottom: 1px dashed #EFE4E1;">
-            <span>空腹血糖</span>
-            <strong>88 mg/dL</strong>
+        </div>
+        <div onclick="navigateTo('view-report')" class="book-spine crayon-card bg-[#D8E2DC] cursor-pointer">
+          <div class="notebook-ring ring-1"></div><div class="notebook-ring ring-2"></div><div class="notebook-ring ring-3"></div>
+          <div class="pt-3"><span class="text-3xl">📋</span></div>
+          <div class="pb-3 pr-2">
+            <h3 class="font-black text-[15px] text-[#384841]">健檢報告</h3>
+            <p class="text-[10px] font-bold text-[#556960] mt-0.5">歷年檢查與視力追蹤</p>
           </div>
-          <div style="display: flex; justify-content: space-between;">
-            <span>總膽固醇</span>
-            <strong>175 mg/dL</strong>
+        </div>
+        <div onclick="navigateTo('view-supple')" class="book-spine crayon-card bg-[#FFE5D9] cursor-pointer">
+          <div class="notebook-ring ring-1"></div><div class="notebook-ring ring-2"></div><div class="notebook-ring ring-3"></div>
+          <div class="pt-3"><span class="text-3xl">💊</span></div>
+          <div class="pb-3 pr-2">
+            <h3 class="font-black text-[15px] text-[#523B33]">保健品指南</h3>
+            <p class="text-[10px] font-bold text-[#785C52] mt-0.5">每日清單與打卡紀錄</p>
+          </div>
+        </div>
+        <div onclick="navigateTo('view-sport')" class="book-spine crayon-card bg-[#D0F4DE] cursor-pointer">
+          <div class="notebook-ring ring-1"></div><div class="notebook-ring ring-2"></div><div class="notebook-ring ring-3"></div>
+          <div class="pt-3"><span class="text-3xl">🏃‍♀️</span></div>
+          <div class="pb-3 pr-2">
+            <h3 class="font-black text-[15px] text-[#324D3E]">循身而動</h3>
+            <p class="text-[10px] font-bold text-[#527260] mt-0.5">活力鍛鍊與汗水日記</p>
+          </div>
+        </div>
+        <div onclick="navigateTo('view-diary')" class="book-spine crayon-card bg-[#E8DFF5] cursor-pointer">
+          <div class="notebook-ring ring-1"></div><div class="notebook-ring ring-2"></div><div class="notebook-ring ring-3"></div>
+          <div class="pt-3"><span class="text-3xl">📖</span></div>
+          <div class="pb-3 pr-2">
+            <h3 class="font-black text-[15px] text-[#463853]">微光時刻</h3>
+            <p class="text-[10px] font-bold text-[#69587B] mt-0.5">心情小語與今日碎碎念</p>
+          </div>
+        </div>
+        <div onclick="navigateTo('view-alarm')" class="book-spine crayon-card bg-[#FFF1BD] cursor-pointer">
+          <div class="notebook-ring ring-1"></div><div class="notebook-ring ring-2"></div><div class="notebook-ring ring-3"></div>
+          <div class="pt-3"><span class="text-3xl">⏰</span></div>
+          <div class="pb-3 pr-2">
+            <h3 class="font-black text-[15px] text-[#524B33]">小鬧鐘</h3>
+            <p class="text-[10px] font-bold text-[#7A7152] mt-0.5">喝水眼休與按時吃藥</p>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- ================= 獨立分頁 3：保健品指南 ================= -->
-  <div id="view-supple" class="view-container">
-    <div class="page-header">
-      <button class="header-btn" onclick="openSidebar()">☰</button>
-      <div class="page-title">💊 保健品指南</div>
-      <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
-    </div>
-    <div class="page-content">
-      <div class="card-box">
-        <div class="card-title">今日服用打卡</div>
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <label style="display: flex; align-items: center; gap: 10px; font-size: 15px;">
-            <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--pink-crayon);"> 🐟 深海魚油 (隨餐)
-          </label>
-          <label style="display: flex; align-items: center; gap: 10px; font-size: 15px;">
-            <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--pink-crayon);"> 👁️ 葉黃素護眼膠囊 (晨起)
-          </label>
-          <label style="display: flex; align-items: center; gap: 10px; font-size: 15px;">
-            <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--pink-crayon);"> 🍋 緩釋維生素 C
-          </label>
-          <label style="display: flex; align-items: center; gap: 10px; font-size: 15px;">
-            <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--pink-crayon);"> 🥛 晚間睡前鈣鎂片
-          </label>
-        </div>
+    <!-- ================= 獨立分頁共用外觀與架構 ================= -->
+    <div id="view-period" class="view-container">
+      <div class="flex items-center justify-between py-3 mb-2 border-b-2 border-[#5A4D41] sticky top-0 bg-[var(--crayon-bg)] z-10">
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="openSidebar()">☰</button>
+        <div class="text-lg font-black text-[#5A4D41]">🌸 宮廷月誌</div>
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="navigateTo('dashboard-view')">✕</button>
       </div>
-    </div>
-  </div>
-
-  <!-- ================= 獨立分頁 4：循身而動 ================= -->
-  <div id="view-sport" class="view-container">
-    <div class="page-header">
-      <button class="header-btn" onclick="openSidebar()">☰</button>
-      <div class="page-title">🏃‍♀️ 循身而動</div>
-      <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
-    </div>
-    <div class="page-content">
-      <div class="card-box">
-        <div class="card-title">運動汗水紀錄</div>
-        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-          <button style="flex: 1; padding: 10px; border-radius: 14px; border: 1.5px solid #9DE0BA; background: #EDFAF2; font-weight: 700; color: #1E4E30;">🧘‍♀️ 瑜伽</button>
-          <button style="flex: 1; padding: 10px; border-radius: 14px; border: 1.5px solid #E2E8F0; background: white; font-weight: 700;">🚶‍♀️ 快走</button>
-          <button style="flex: 1; padding: 10px; border-radius: 14px; border: 1.5px solid #E2E8F0; background: white; font-weight: 700;">🏋️ 重訓</button>
-        </div>
-        <button class="btn-crayon-primary" style="background: linear-gradient(135deg, #D0F4DE, #B2EAC5); color: #1E4E30;" onclick="alert('打卡完成！真棒！')">完成運動 30 分鐘 ✨</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= 獨立分頁 5：微光時刻 ================= -->
-  <div id="view-diary" class="view-container">
-    <div class="page-header">
-      <button class="header-btn" onclick="openSidebar()">☰</button>
-      <div class="page-title">📖 微光時刻</div>
-      <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
-    </div>
-    <div class="page-content">
-      <div class="card-box">
-        <div class="card-title">今日心情氣象</div>
-        <div style="display: flex; justify-content: space-around; font-size: 26px; margin-bottom: 14px;">
-          <span>🥰</span><span>🌿</span><span>😴</span><span>🌧️</span><span>🍦</span>
-        </div>
-        <textarea class="crayon-input" style="height: 120px; resize: none;" placeholder="寫下一點今天的小小感悟與微光..."></textarea>
-        <button class="btn-crayon-primary" style="background: linear-gradient(135deg, #E8DFF5, #D2C4E9); color: #43315B; margin-top: 12px;" onclick="alert('心情已溫柔收進筆記本中')">珍藏日記 🌸</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= 獨立分頁 6：小鬧鐘 ================= -->
-  <div id="view-alarm" class="view-container">
-    <div class="page-header">
-      <button class="header-btn" onclick="openSidebar()">☰</button>
-      <div class="page-title">⏰ 小鬧鐘</div>
-      <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
-    </div>
-    <div class="page-content">
-      <div class="card-box">
-        <div class="card-title">💧 喝水補水進度（目標 2000 ml）</div>
-        <div class="water-row">
-          <span class="water-cup drank" onclick="toggleCup(this)">🥛</span>
-          <span class="water-cup drank" onclick="toggleCup(this)">🥛</span>
-          <span class="water-cup drank" onclick="toggleCup(this)">🥛</span>
-          <span class="water-cup" onclick="toggleCup(this)">🥛</span>
-          <span class="water-cup" onclick="toggleCup(this)">🥛</span>
-          <span class="water-cup" onclick="toggleCup(this)">🥛</span>
-        </div>
-      </div>
-
-      <div class="card-box">
-        <div class="card-title">定時提醒設定</div>
-        <div style="display: flex; flex-direction: column; gap: 14px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>💧 每 1 小時喝水提示</span>
-            <input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #FCD34D;">
+      <div class="space-y-4 pt-2">
+        <div class="crayon-card p-4 bg-white">
+          <div class="text-sm font-black text-[#5A4D41] mb-2">📅 本月週期推算日曆</div>
+          <div class="calendar-grid">
+            <div class="cal-header">日</div><div class="cal-header">一</div><div class="cal-header">二</div><div class="cal-header">三</div><div class="cal-header">四</div><div class="cal-header">五</div><div class="cal-header">六</div>
+            <div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div>
+            <div class="cal-day period">5</div><div class="cal-day period">6</div><div class="cal-day period">7</div><div class="cal-day period">8</div><div class="cal-day period">9</div><div class="cal-day">10</div><div class="cal-day">11</div>
+            <div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day">15</div>
+            <div class="cal-day ovulation">16</div><div class="cal-day ovulation">17</div><div class="cal-day ovulation">18</div><div class="cal-day ovulation">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
+            <div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>👀 用眼 30 分鐘抬頭休息</span>
-            <input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #FCD34D;">
+          <button class="w-full py-2.5 mt-4 crayon-btn bg-[#FFCAD4] text-sm" onclick="alert('🩸 今日月經來訪打卡成功！')">今天月經來了 🩸</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 健檢報告 -->
+    <div id="view-report" class="view-container">
+      <div class="flex items-center justify-between py-3 mb-2 border-b-2 border-[#5A4D41] sticky top-0 bg-[var(--crayon-bg)] z-10">
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="openSidebar()">☰</button>
+        <div class="text-lg font-black text-[#5A4D41]">📋 健檢報告</div>
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="navigateTo('dashboard-view')">✕</button>
+      </div>
+      <div class="space-y-4 pt-2">
+        <div class="crayon-card p-4 bg-white">
+          <div class="text-sm font-black text-[#5A4D41] mb-3">👀 視力追蹤專區</div>
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="bg-[#F9FAF9] p-3 rounded-2xl border-2 border-[#5A4D41] text-center">
+              <div class="text-[11px] font-bold text-stone-500">左眼 (L) 裸視/散光</div>
+              <div class="text-xl font-black text-[#5A4D41] mt-1">1.0 / 50°</div>
+            </div>
+            <div class="bg-[#F9FAF9] p-3 rounded-2xl border-2 border-[#5A4D41] text-center">
+              <div class="text-[11px] font-bold text-stone-500">右眼 (R) 裸視/散光</div>
+              <div class="text-xl font-black text-[#5A4D41] mt-1">0.9 / 75°</div>
+            </div>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>🩸 經期前 3 天預先通知</span>
-            <input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #FCD34D;">
+          <button class="w-full py-2.5 crayon-btn bg-[#D8E2DC] text-sm" onclick="alert('視力已儲存紀錄！')">更新視力數據</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 保健品指南 -->
+    <div id="view-supple" class="view-container">
+      <div class="flex items-center justify-between py-3 mb-2 border-b-2 border-[#5A4D41] sticky top-0 bg-[var(--crayon-bg)] z-10">
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="openSidebar()">☰</button>
+        <div class="text-lg font-black text-[#5A4D41]">💊 保健品指南</div>
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="navigateTo('dashboard-view')">✕</button>
+      </div>
+      <div class="space-y-4 pt-2">
+        <div class="crayon-card p-4 bg-white">
+          <div class="text-sm font-black text-[#5A4D41] mb-3">今日服用打卡</div>
+          <div class="space-y-3">
+            <label class="flex items-center gap-3 text-sm font-bold text-[#5A4D41]"><input type="checkbox" class="w-5 h-5 accent-[#FFCAD4]"> 🐟 深海魚油 (隨餐)</label>
+            <label class="flex items-center gap-3 text-sm font-bold text-[#5A4D41]"><input type="checkbox" class="w-5 h-5 accent-[#FFCAD4]"> 👁️ 葉黃素護眼膠囊 (晨起)</label>
+            <label class="flex items-center gap-3 text-sm font-bold text-[#5A4D41]"><input type="checkbox" class="w-5 h-5 accent-[#FFCAD4]"> 🍋 緩釋維生素 C</label>
+            <label class="flex items-center gap-3 text-sm font-bold text-[#5A4D41]"><input type="checkbox" class="w-5 h-5 accent-[#FFCAD4]"> 🥛 晚間睡前鈣鎂片</label>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- ================= 獨立分頁 7：系統設定 ================= -->
-  <div id="view-settings" class="view-container">
-    <div class="page-header">
-      <button class="header-btn" onclick="openSidebar()">☰</button>
-      <div class="page-title">⚙️ 系統設定</div>
-      <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
+    <!-- 循身而動 -->
+    <div id="view-sport" class="view-container">
+      <div class="flex items-center justify-between py-3 mb-2 border-b-2 border-[#5A4D41] sticky top-0 bg-[var(--crayon-bg)] z-10">
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="openSidebar()">☰</button>
+        <div class="text-lg font-black text-[#5A4D41]">🏃‍♀️ 循身而動</div>
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="navigateTo('dashboard-view')">✕</button>
+      </div>
+      <div class="space-y-4 pt-2">
+        <div class="crayon-card p-4 bg-white">
+          <div class="text-sm font-black text-[#5A4D41] mb-3">運動汗水紀錄</div>
+          <div class="flex gap-2 mb-4">
+            <button class="flex-1 py-2 rounded-xl border-2 border-[#5A4D41] bg-[#D0F4DE] font-bold text-sm">🧘‍♀️ 瑜伽</button>
+            <button class="flex-1 py-2 rounded-xl border-2 border-[#5A4D41] bg-white font-bold text-sm">🚶‍♀️ 快走</button>
+            <button class="flex-1 py-2 rounded-xl border-2 border-[#5A4D41] bg-white font-bold text-sm">🏋️️ 重訓</button>
+          </div>
+          <button class="w-full py-2.5 crayon-btn bg-[#D0F4DE] text-sm" onclick="alert('打卡完成！真棒！')">完成運動 30 分鐘 ✨</button>
+        </div>
+      </div>
     </div>
-    <div class="page-content">
-      <!-- 1. 個人檔案概覽與修改 -->
-      <div class="card-box">
-        <div class="card-title">👤 個人檔案</div>
-        <p id="settings-info-text" style="font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 12px;"></p>
-        <button class="btn-secondary" onclick="openEditModal()">✏️ 修改個人檔案</button>
-      </div>
 
-      <!-- 2. 資料備份與還原 -->
-      <div class="card-box">
-        <div class="card-title">💾 資料備份與還原</div>
-        <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
-          所有紀錄皆保存在您的手機本機中。建議定期匯出備份，避免清除瀏覽器快取時遺失。
-        </p>
-        <button class="btn-secondary" onclick="exportDataBackup()">📤 匯出 JSON 備份檔</button>
-        <button class="btn-secondary" onclick="document.getElementById('import-file-input').click()">📥 匯入 JSON 備份檔</button>
-        <input type="file" id="import-file-input" class="hidden-file-input" accept=".json" onchange="importDataBackup(event)">
+    <!-- 微光時刻 -->
+    <div id="view-diary" class="view-container">
+      <div class="flex items-center justify-between py-3 mb-2 border-b-2 border-[#5A4D41] sticky top-0 bg-[var(--crayon-bg)] z-10">
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="openSidebar()">☰</button>
+        <div class="text-lg font-black text-[#5A4D41]">📖 微光時刻</div>
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="navigateTo('dashboard-view')">✕</button>
       </div>
+      <div class="space-y-4 pt-2">
+        <div class="crayon-card p-4 bg-white">
+          <div class="text-sm font-black text-[#5A4D41] mb-3">今日心情氣象</div>
+          <div class="flex justify-around text-3xl mb-4">
+            <span class="cursor-pointer hover:scale-110 transition-transform">🥰</span>
+            <span class="cursor-pointer hover:scale-110 transition-transform">🌿</span>
+            <span class="cursor-pointer hover:scale-110 transition-transform">😴</span>
+            <span class="cursor-pointer hover:scale-110 transition-transform">🌧️</span>
+            <span class="cursor-pointer hover:scale-110 transition-transform">🍦</span>
+          </div>
+          <textarea class="w-full p-3 border-2 border-[#5A4D41] rounded-2xl text-sm outline-none resize-none h-28" placeholder="寫下一點今天的小小感悟與微光..."></textarea>
+          <button class="w-full py-2.5 mt-3 crayon-btn bg-[#E8DFF5] text-sm" onclick="alert('心情已溫柔收進筆記本中')">珍藏日記 🌸</button>
+        </div>
+      </div>
+    </div>
 
-      <!-- 3. 刪除資料危險區（嚴謹提示） -->
-      <div class="card-box" style="border-color: #FFCAD4;">
-        <div class="card-title" style="color: #D9383A;">⚠️ 危險區域</div>
-        <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
-          此操作將徹底清空手機內儲存的個人檔案、月經日記、視力及所有健康紀錄，無法復原。
-        </p>
-        <button class="btn-secondary btn-danger" onclick="confirmDeleteAllData()">🗑️ 刪除全部資料</button>
+    <!-- 小鬧鐘 -->
+    <div id="view-alarm" class="view-container">
+      <div class="flex items-center justify-between py-3 mb-2 border-b-2 border-[#5A4D41] sticky top-0 bg-[var(--crayon-bg)] z-10">
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="openSidebar()">☰</button>
+        <div class="text-lg font-black text-[#5A4D41]">⏰ 小鬧鐘</div>
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="navigateTo('dashboard-view')">✕</button>
+      </div>
+      <div class="space-y-4 pt-2">
+        <div class="crayon-card p-4 bg-white">
+          <div class="text-sm font-black text-[#5A4D41] mb-3">💧 喝水補水進度</div>
+          <div class="flex justify-between mb-2">
+            <span class="water-cup drank" onclick="toggleCup(this)">🥛</span>
+            <span class="water-cup drank" onclick="toggleCup(this)">🥛</span>
+            <span class="water-cup drank" onclick="toggleCup(this)">🥛</span>
+            <span class="water-cup" onclick="toggleCup(this)">🥛</span>
+            <span class="water-cup" onclick="toggleCup(this)">🥛</span>
+            <span class="water-cup" onclick="toggleCup(this)">🥛</span>
+          </div>
+        </div>
+        <div class="crayon-card p-4 bg-white">
+          <div class="text-sm font-black text-[#5A4D41] mb-3">定時提醒設定</div>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center"><span class="text-sm font-bold text-[#5A4D41]">💧 每 1 小時喝水提示</span><input type="checkbox" checked class="w-5 h-5 accent-[#FFF1BD]"></div>
+            <div class="flex justify-between items-center"><span class="text-sm font-bold text-[#5A4D41]">👀 用眼 30 分鐘休息</span><input type="checkbox" checked class="w-5 h-5 accent-[#FFF1BD]"></div>
+            <div class="flex justify-between items-center"><span class="text-sm font-bold text-[#5A4D41]">🩸 經期前 3 天通知</span><input type="checkbox" checked class="w-5 h-5 accent-[#FFF1BD]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 系統設定 -->
+    <div id="view-settings" class="view-container">
+      <div class="flex items-center justify-between py-3 mb-2 border-b-2 border-[#5A4D41] sticky top-0 bg-[var(--crayon-bg)] z-10">
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="openSidebar()">☰</button>
+        <div class="text-lg font-black text-[#5A4D41]">⚙️ 系統設定</div>
+        <button class="text-2xl font-bold text-[#5A4D41] px-2" onclick="navigateTo('dashboard-view')">✕</button>
+      </div>
+      <div class="space-y-4 pt-2">
+        <div class="crayon-card p-4 bg-white">
+          <div class="text-sm font-black text-[#5A4D41] mb-2">👤 個人檔案</div>
+          <p id="settings-info-text" class="text-sm font-bold text-stone-500 mb-4 leading-loose"></p>
+          <button class="w-full py-2.5 crayon-btn bg-white text-sm text-[#5A4D41]" onclick="openEditModal()">✏️ 修改個人檔案</button>
+        </div>
+
+        <div class="crayon-card p-4 bg-white">
+          <div class="text-sm font-black text-[#5A4D41] mb-2">💾 資料備份與還原</div>
+          <p class="text-xs font-bold text-stone-500 mb-4 leading-relaxed">紀錄皆保存在您的手機內。建議定期備份，避免遺失。</p>
+          <button class="w-full py-2.5 mb-3 crayon-btn bg-[#E8DFF5] text-sm" onclick="exportDataBackup()">📤 匯出 JSON 備份檔</button>
+          <button class="w-full py-2.5 crayon-btn bg-white text-sm" onclick="document.getElementById('import-file-input').click()">📥 匯入 JSON 備份檔</button>
+          <input type="file" id="import-file-input" class="hidden" accept=".json" onchange="importDataBackup(event)">
+        </div>
+
+        <div class="crayon-card p-4 bg-[#FFFBFB] border-[#FFCAD4]">
+          <div class="text-sm font-black text-red-600 mb-2">⚠️ 危險區域</div>
+          <p class="text-xs font-bold text-stone-500 mb-4 leading-relaxed">清空手機內儲存的所有健康紀錄，無法復原。</p>
+          <button class="w-full py-2.5 crayon-btn bg-red-100 text-red-600 text-sm border-red-300 shadow-[2px_2px_0_#FCA5A5]" onclick="confirmDeleteAllData()">🗑️ 刪除全部資料</button>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    // 狀態變數
-    let currentProfile = {
-      name: "",
-      birth: "",
-      gender: "女",
-      avatar: ""
-    };
+    let currentProfile = { name: "", birth: "", gender: "女", avatar: "🌸" };
     let isEditing = false;
     let tempEditAvatar = "";
     let tempEditGender = "女";
     let tempEditBirthday = "";
 
-    // 建立生日挑選器選項
     function initBirthdayPicker() {
       const yearSel = document.getElementById('bday-year');
       const monthSel = document.getElementById('bday-month');
       const daySel = document.getElementById('bday-day');
-      
       const currentYear = 2026;
       for (let y = currentYear; y >= currentYear - 70; y--) {
-        const opt = document.createElement('option');
-        opt.value = y;
-        opt.textContent = `${y} 年`;
-        if (y === 2000) opt.selected = true;
-        yearSel.appendChild(opt);
+        const opt = document.createElement('option'); opt.value = y; opt.textContent = `${y}年`;
+        if (y === 2000) opt.selected = true; yearSel.appendChild(opt);
       }
       for (let m = 1; m <= 12; m++) {
-        const opt = document.createElement('option');
-        opt.value = m;
-        opt.textContent = `${m} 月`;
-        monthSel.appendChild(opt);
+        const opt = document.createElement('option'); opt.value = m; opt.textContent = `${m}月`; monthSel.appendChild(opt);
       }
       for (let d = 1; d <= 31; d++) {
-        const opt = document.createElement('option');
-        opt.value = d;
-        opt.textContent = `${d} 日`;
-        daySel.appendChild(opt);
+        const opt = document.createElement('option'); opt.value = d; opt.textContent = `${d}日`; daySel.appendChild(opt);
       }
     }
 
     function openBirthdayPicker(editing = false) {
-      isEditing = editing;
-      document.getElementById('birthday-modal').classList.add('show');
+      isEditing = editing; document.getElementById('birthday-modal').classList.add('show');
     }
 
     function confirmBirthday() {
@@ -1102,59 +603,47 @@
       const d = document.getElementById('bday-day').value.padStart(2, '0');
       const formatted = `${y}-${m}-${d}`;
       const displayText = `${y} 年 ${m} 月 ${d} 日 🎂`;
-
       if (isEditing) {
-        tempEditBirthday = formatted;
-        document.getElementById('edit-bday-display').textContent = displayText;
+        tempEditBirthday = formatted; document.getElementById('edit-bday-display').textContent = displayText;
       } else {
-        currentProfile.birth = formatted;
-        document.getElementById('bday-display').textContent = displayText;
+        currentProfile.birth = formatted; document.getElementById('bday-display').textContent = displayText;
       }
       document.getElementById('birthday-modal').classList.remove('show');
     }
 
-    // 首次設定大頭貼監聽
-    document.getElementById('avatar-file-input').addEventListener('change', function(e) {
-      handleAvatarFile(e.target.files[0], (base64) => {
-        currentProfile.avatar = base64;
-        document.getElementById('setup-avatar-preview').innerHTML = `<img src="${base64}" alt="avatar">`;
+    ['avatar-file-input', 'edit-avatar-input'].forEach(id => {
+      document.getElementById(id).addEventListener('change', function(e) {
+        if (!e.target.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          if (id === 'avatar-file-input') { currentProfile.avatar = ev.target.result; document.getElementById('setup-avatar-preview').innerHTML = `<img src="${ev.target.result}">`; }
+          else { tempEditAvatar = ev.target.result; document.getElementById('edit-avatar-preview').innerHTML = `<img src="${ev.target.result}">`; }
+        };
+        reader.readAsDataURL(e.target.files[0]);
       });
     });
-
-    // 修改大頭貼監聽
-    document.getElementById('edit-avatar-input').addEventListener('change', function(e) {
-      handleAvatarFile(e.target.files[0], (base64) => {
-        tempEditAvatar = base64;
-        document.getElementById('edit-avatar-preview').innerHTML = `<img src="${base64}" alt="avatar">`;
-      });
-    });
-
-    function handleAvatarFile(file, callback) {
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = e => callback(e.target.result);
-      reader.readAsDataURL(file);
-    }
 
     function selectGender(el, gender) {
-      document.querySelectorAll('#setup-view .gender-chip-btn').forEach(btn => btn.classList.remove('selected'));
-      el.classList.add('selected');
+      document.querySelectorAll('#setup-gender-wrap > div').forEach(d => {
+        d.classList.remove('bg-[#FFCAD4]', 'shadow-[2px_2px_0_#5A4D41]'); d.classList.add('bg-white');
+      });
+      el.classList.remove('bg-white'); el.classList.add('bg-[#FFCAD4]', 'shadow-[2px_2px_0_#5A4D41]');
       currentProfile.gender = gender;
     }
 
     function selectEditGender(gender) {
       tempEditGender = gender;
-      document.getElementById('edit-gender-female').classList.toggle('selected', gender === '女');
-      document.getElementById('edit-gender-male').classList.toggle('selected', gender === '男');
-      document.getElementById('edit-gender-secret').classList.toggle('selected', gender === '秘');
+      ['edit-gender-female', 'edit-gender-male', 'edit-gender-secret'].forEach(id => {
+        document.getElementById(id).classList.remove('bg-[#FFCAD4]', 'shadow-[2px_2px_0_#5A4D41]'); document.getElementById(id).classList.add('bg-white');
+      });
+      const idMap = { '女': 'edit-gender-female', '男': 'edit-gender-male', '秘': 'edit-gender-secret' };
+      const el = document.getElementById(idMap[gender]);
+      if (el) { el.classList.remove('bg-white'); el.classList.add('bg-[#FFCAD4]', 'shadow-[2px_2px_0_#5A4D41]'); }
     }
 
     function completeSetup() {
       const name = document.getElementById('setup-name').value.trim();
-      if (!name) {
-        alert("請輸入可愛的暱稱喔 🌸");
-        return;
-      }
+      if (!name) return alert("請輸入可愛的暱稱喔 🌸");
       currentProfile.name = name;
       localStorage.setItem('hd_user_profile', JSON.stringify(currentProfile));
       loadDashboard(currentProfile);
@@ -1163,182 +652,87 @@
 
     function loadDashboard(profile) {
       currentProfile = profile;
-      document.getElementById('dash-greeting-text').textContent = `Hi ${profile.name}寶寶`;
-      document.getElementById('sidebar-user-name').textContent = `${profile.name}寶寶`;
+      document.getElementById('dash-greeting-text').textContent = profile.name;
+      document.getElementById('sidebar-user-name').textContent = profile.name;
+      
+      const avContent = profile.avatar.length > 5 ? `<img src="${profile.avatar}">` : profile.avatar;
+      document.getElementById('dash-avatar-box').innerHTML = avContent;
+      document.getElementById('sidebar-avatar-box').innerHTML = avContent;
 
-      renderAllAvatars(profile.avatar);
-
-      const settingsInfo = document.getElementById('settings-info-text');
-      if (settingsInfo) {
-        settingsInfo.innerHTML = `
-          <strong>暱稱：</strong>${profile.name}<br>
-          <strong>生日：</strong>${profile.birth || '未設定'}<br>
-          <strong>性別：</strong>${profile.gender}
-        `;
-      }
+      document.getElementById('settings-info-text').innerHTML = `暱稱：${profile.name}<br>生日：${profile.birth || '未設定'}<br>性別：${profile.gender}`;
     }
 
-    function renderAllAvatars(src) {
-      const content = src ? `<img src="${src}" alt="avatar">` : `🌸`;
-      document.getElementById('dash-avatar-box').innerHTML = content;
-      document.getElementById('sidebar-avatar-box').innerHTML = content;
-    }
-
-    // ====== 修改個人檔案彈窗邏輯 ======
     function openEditModal() {
-      tempEditAvatar = currentProfile.avatar;
-      tempEditGender = currentProfile.gender || '女';
-      tempEditBirthday = currentProfile.birth || '';
-
+      tempEditAvatar = currentProfile.avatar; tempEditGender = currentProfile.gender || '女'; tempEditBirthday = currentProfile.birth || '';
       document.getElementById('edit-name').value = currentProfile.name;
-      document.getElementById('edit-avatar-preview').innerHTML = tempEditAvatar ? `<img src="${tempEditAvatar}">` : `🌸`;
+      document.getElementById('edit-avatar-preview').innerHTML = tempEditAvatar.length > 5 ? `<img src="${tempEditAvatar}">` : tempEditAvatar;
       document.getElementById('edit-bday-display').textContent = tempEditBirthday ? `${tempEditBirthday} 🎂` : '點擊設定生日 🎂';
       selectEditGender(tempEditGender);
-
       document.getElementById('edit-profile-modal').classList.add('show');
     }
 
-    function closeEditModal() {
-      document.getElementById('edit-profile-modal').classList.remove('show');
-    }
+    function closeEditModal() { document.getElementById('edit-profile-modal').classList.remove('show'); }
 
     function saveEditedProfile() {
       const newName = document.getElementById('edit-name').value.trim();
-      if (!newName) {
-        alert("暱稱不能為空喔！🌸");
-        return;
-      }
-      currentProfile.name = newName;
-      currentProfile.avatar = tempEditAvatar;
-      currentProfile.gender = tempEditGender;
-      currentProfile.birth = tempEditBirthday;
-
+      if (!newName) return alert("暱稱不能為空喔！🌸");
+      currentProfile.name = newName; currentProfile.avatar = tempEditAvatar;
+      currentProfile.gender = tempEditGender; currentProfile.birth = tempEditBirthday;
       localStorage.setItem('hd_user_profile', JSON.stringify(currentProfile));
-      loadDashboard(currentProfile);
-      closeEditModal();
-      alert("個人檔案已更新成功 ✨");
+      loadDashboard(currentProfile); closeEditModal(); alert("個人檔案已更新成功 ✨");
     }
 
-    // ====== 資料備份：匯出 JSON ======
     function exportDataBackup() {
-      const exportData = {
-        profile: currentProfile,
-        exportDate: new Date().toISOString(),
-        version: "1.0",
-        app: "Health-diary"
-      };
-
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `health_diary_backup_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({profile: currentProfile}, null, 2));
+      const a = document.createElement('a'); a.href = dataStr; a.download = `健康日誌_備份.json`;
+      document.body.appendChild(a); a.click(); a.remove();
     }
 
-    // ====== 資料還原：匯入 JSON ======
     function importDataBackup(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = e => {
         try {
           const imported = JSON.parse(e.target.result);
-          if (imported.profile) {
-            localStorage.setItem('hd_user_profile', JSON.stringify(imported.profile));
-            alert("備份資料匯入成功！即將為您重新載入 ✨");
-            location.reload();
-          } else {
-            alert("匯入失敗：備份檔格式不符。");
-          }
-        } catch (err) {
-          alert("解析備份檔時發生錯誤，請確認檔案格式是否正確。");
-        }
+          if (imported.profile) { localStorage.setItem('hd_user_profile', JSON.stringify(imported.profile)); alert("備份資料匯入成功！"); location.reload(); }
+        } catch(err) { alert("讀取備份檔案失敗"); }
       };
       reader.readAsText(file);
     }
 
-    // ====== 刪除全部資料（嚴謹提示防呆） ======
     function confirmDeleteAllData() {
-      const step1 = confirm("⚠️ 警告：此操作將徹底清空您所有的健康數據、個人檔案與所有日記，且無法復原！\n\n確定要繼續嗎？");
-      if (!step1) return;
-
-      const promptInput = prompt("為避免誤觸，請在下方輸入「確認刪除」四個字以抹除資料：");
-      if (promptInput === "確認刪除") {
-        localStorage.clear();
-        alert("所有資料已全數清除，應用程式即將重新啟動。");
-        location.reload();
-      } else {
-        alert("文字輸入不符，已安全取消刪除動作。🌱");
-      }
+      const input = prompt("【嚴謹防呆機制】\n此操作將徹底清空所有健康紀錄與日記且無法復原。\n請在下方輸入「確認刪除」四個字以執行抹除：");
+      if (input === "確認刪除") { localStorage.clear(); alert("資料已清空"); location.reload(); }
+      else if (input !== null) { alert("輸入不符，已安全取消刪除。"); }
     }
 
-    // 換頁
     function navigateTo(viewId) {
       closeSidebar();
-      document.querySelectorAll('.view-container').forEach(view => {
-        view.classList.remove('active');
-      });
-      const target = document.getElementById(viewId);
-      if (target) {
-        target.classList.add('active');
-        window.scrollTo(0, 0);
-      }
+      document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active'); window.scrollTo(0, 0);
     }
 
-    // 側邊選單開關
-    const sidebar = document.getElementById('sidebar');
-    const sidebarMask = document.getElementById('sidebar-mask');
-
-    function openSidebar() {
-      sidebar.classList.add('open');
-      sidebarMask.classList.add('show');
-    }
-
-    function closeSidebar() {
-      sidebar.classList.remove('open');
-      sidebarMask.classList.remove('show');
-    }
-
+    const sidebar = document.getElementById('sidebar'), sidebarMask = document.getElementById('sidebar-mask');
+    function openSidebar() { sidebar.classList.add('open'); sidebarMask.classList.add('show'); }
+    function closeSidebar() { sidebar.classList.remove('open'); sidebarMask.classList.remove('show'); }
     sidebarMask.addEventListener('click', closeSidebar);
 
-    // 手指滑動手勢
-    let touchStartX = 0;
-    let touchStartY = 0;
-    window.addEventListener('touchstart', e => {
-      touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
-    }, { passive: true });
-
+    let tStartX = 0, tStartY = 0;
+    window.addEventListener('touchstart', e => { tStartX = e.changedTouches[0].screenX; tStartY = e.changedTouches[0].screenY; }, { passive: true });
     window.addEventListener('touchend', e => {
-      const diffX = e.changedTouches[0].screenX - touchStartX;
-      const diffY = e.changedTouches[0].screenY - touchStartY;
-      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
-        if (diffX > 0 && touchStartX < 120) openSidebar();
-        else if (diffX < 0 && sidebar.classList.contains('open')) closeSidebar();
+      const dx = e.changedTouches[0].screenX - tStartX, dy = e.changedTouches[0].screenY - tStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 60) {
+        if (dx > 0 && tStartX < 120) openSidebar(); else if (dx < 0 && sidebar.classList.contains('open')) closeSidebar();
       }
     }, { passive: true });
 
-    function toggleCup(el) {
-      el.classList.toggle('drank');
-    }
+    function toggleCup(el) { el.classList.toggle('drank'); }
 
     window.addEventListener('DOMContentLoaded', () => {
       initBirthdayPicker();
       const saved = localStorage.getItem('hd_user_profile');
-      if (saved) {
-        try {
-          const profile = JSON.parse(saved);
-          loadDashboard(profile);
-          navigateTo('dashboard-view');
-        } catch(e) {
-          navigateTo('setup-view');
-        }
-      } else {
-        navigateTo('setup-view');
-      }
+      if (saved) { try { loadDashboard(JSON.parse(saved)); navigateTo('dashboard-view'); } catch(e) { navigateTo('setup-view'); } } 
+      else { navigateTo('setup-view'); }
     });
   </script>
 </body>
