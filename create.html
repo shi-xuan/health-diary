@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>健康日誌 - 你的貼心粉彩隨身筆記</title>
+  
+  <!-- Apple Web App PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="健康日誌">
+  <meta name="theme-color" content="#FFFDF8">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for cute rounded handwriting feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --crayon-bg: #FFFDF8;
+      --crayon-pink: #FFCAD4;
+      --crayon-green: #D8E2DC;
+      --crayon-yellow: #FFE5D9;
+      --crayon-purple: #E8DFF5;
+      --crayon-blue: #D0F4DE;
+      --crayon-text: #4A403A;
+      --crayon-border: #6B5B52;
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      box-sizing: border-box;
+    }
+
+    input, textarea, select {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    body {
+      background-color: var(--crayon-bg);
+      color: var(--crayon-text);
+      font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      overflow-x: hidden;
+    }
+
+    /* Hand-drawn crayon border & shadow feel */
+    .crayon-card {
+      border: 2.5px solid #5A4D41;
+      border-radius: 26px 22px 28px 20px;
+      box-shadow: 4px 5px 0px #5A4D41;
+      transition: all 0.15s ease-in-out;
+    }
+    .crayon-card:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px #5A4D41;
+    }
+
+    .crayon-btn {
+      border: 2px solid #5A4D41;
+      border-radius: 9999px;
+      box-shadow: 2.5px 3px 0px #5A4D41;
+      font-weight: 700;
+      transition: all 0.1s ease-in-out;
+    }
+    .crayon-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0.5px 0.5px 0px #5A4D41;
+    }
+
+    .crayon-pill {
+      border: 1.5px solid #5A4D41;
+      box-shadow: 1.5px 2px 0px #5A4D41;
+    }
+
+    /* Book 3D spine effect for the 6 book icons */
+    .book-spine {
+      position: relative;
+      overflow: hidden;
+    }
+    .book-spine::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 14px;
+      background: rgba(0, 0, 0, 0.08);
+      border-right: 2px dashed rgba(90, 77, 65, 0.4);
+    }
+
+    /* Custom smooth scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #E8D5CE;
+      border-radius: 10px;
+    }
+    
+    .modal-sheet {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-pink-200">
+
+  <div id="app" class="w-full max-w-md mx-auto min-h-screen flex flex-col relative px-4 pb-12 pt-3">
+    
+    <!-- ==================== ONBOARDING VIEW ==================== -->
+    <div id="view-onboarding" class="hidden flex-1 flex flex-col justify-center items-center py-6">
+      <div class="w-full bg-[#FFF5EB] crayon-card p-6 text-center space-y-4 relative">
+        <div class="w-20 h-20 mx-auto rounded-full bg-[#FFCAD4] border-2 border-[#5A4D41] flex items-center justify-center text-4xl shadow-inner">
+          🧸
+        </div>
+        <div>
+          <h1 class="text-2xl font-black text-[#5A4D41] tracking-wide">歡迎來到 健康日誌</h1>
+          <p class="text-xs text-[#8A7968] mt-1">讓我們認識彼此，為你打理溫馨日常</p>
+        </div>
+
+        <form id="onboarding-form" class="space-y-4 text-left pt-2">
+          <div>
+            <label class="block text-xs font-bold text-[#5A4D41] mb-1">你的暱稱 ✨</label>
+            <input type="text" id="ob-nickname" required placeholder="例如：圓圓、安安" maxlength="10"
+                   class="w-full px-4 py-2.5 rounded-2xl border-2 border-[#5A4D41] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-[#5A4D41] mb-1">你的生日 🎂</label>
+            <input type="date" id="ob-birthday" required
+                   class="w-full px-4 py-2.5 rounded-2xl border-2 border-[#5A4D41] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-[#5A4D41] mb-1">生理性別 🌿 (輔助週期運算)</label>
+            <div class="grid grid-cols-3 gap-2">
+              <label class="cursor-pointer">
+                <input type="radio" name="ob-gender" value="female" checked class="peer sr-only">
+                <div class="py-2 text-center text-xs font-bold rounded-xl border-2 border-[#5A4D41] peer-checked:bg-[#FFCAD4] peer-checked:shadow-[2px_2px_0_#5A4D41] bg-white">
+                  女生 🌸
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="ob-gender" value="male" class="peer sr-only">
+                <div class="py-2 text-center text-xs font-bold rounded-xl border-2 border-[#5A4D41] peer-checked:bg-[#D0F4DE] peer-checked:shadow-[2px_2px_0_#5A4D41] bg-white">
+                  男生 🍃
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="ob-gender" value="other" class="peer sr-only">
+                <div class="py-2 text-center text-xs font-bold rounded-xl border-2 border-[#5A4D41] peer-checked:bg-[#E8DFF5] peer-checked:shadow-[2px_2px_0_#5A4D41] bg-white">
+                  保密 ✨
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-3 mt-4 crayon-btn bg-[#FFCAD4] text-[#5A4D41] text-base hover:bg-pink-200">
+            開始我的健康小旅程 🌱
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== MAIN DASHBOARD VIEW ==================== -->
+    <div id="view-dashboard" class="flex-1 flex flex-col space-y-4">
+      
+      <!-- Top Greeting Bar -->
+      <header class="flex items-center justify-between pt-2">
+        <div class="flex items-center space-x-3">
+          <!-- Avatar (Clickable to change) -->
+          <button id="avatar-btn" onclick="openAvatarSelector()" class="relative group" title="更換可愛頭像">
+            <div id="dash-avatar" class="w-14 h-14 rounded-full border-2 border-[#5A4D41] bg-[#FFCAD4] flex items-center justify-center text-3xl shadow-[2px_3px_0_#5A4D41] transition-transform active:scale-95">
+              🐰
+            </div>
+            <span class="absolute -bottom-1 -right-1 bg-white text-[10px] px-1.5 py-0.5 rounded-full border border-[#5A4D41]">✏️</span>
+          </button>
+          
+          <!-- Greetings -->
+          <div>
+            <div class="flex items-baseline space-x-1">
+              <span class="text-xl font-black text-[#5A4D41]">Hi</span>
+              <span id="dash-nickname" class="text-xl font-black text-[#E76F51]">寶寶</span>
+              <span class="text-lg">💖</span>
+            </div>
+            <p id="dash-quote" class="text-xs text-[#7A6A5C] font-medium mt-0.5 max-w-[200px] truncate">
+              今天也要好好喝水，溫柔愛自己～
+            </p>
+          </div>
+        </div>
+
+        <!-- Gear / Settings Button -->
+        <button onclick="openModal('modal-settings')" class="w-11 h-11 crayon-btn bg-white flex items-center justify-center text-xl hover:bg-amber-50 active:scale-95" aria-label="設定">
+          ⚙️
+        </button>
+      </header>
+
+      <!-- Quick Tips Banner for iOS "Add to Home Screen" -->
+      <div id="ios-pwa-tip" class="bg-[#FFF3CD] border-2 border-[#5A4D41] rounded-2xl p-2.5 flex items-center justify-between text-xs text-[#6B5738]">
+        <div class="flex items-center space-x-2">
+          <span>📲</span>
+          <span>在 Safari 點擊「分享」➜「加入主畫面」秒變獨立 App！</span>
+        </div>
+        <button onclick="dismissPwaTip()" class="text-stone-500 font-bold px-1 hover:text-black">✕</button>
+      </div>
+
+      <!-- Quick Daily Hydration & Eye Widget -->
+      <div class="grid grid-cols-2 gap-3">
+        <!-- Water Quick Counter -->
+        <div class="bg-[#D0F4DE] crayon-card p-3 flex items-center justify-between">
+          <div>
+            <div class="text-[11px] font-bold text-[#3B6651]">今日喝水 💧</div>
+            <div class="text-lg font-black text-[#264D3B] mt-0.5"><span id="widget-water-count">0</span> / 8 杯</div>
+          </div>
+          <button onclick="addWaterCup(1)" class="w-9 h-9 crayon-btn bg-white text-base flex items-center justify-center">
+            ＋
+          </button>
+        </div>
+
+        <!-- Eye Break Quick Timer -->
+        <div class="bg-[#FFE5D9] crayon-card p-3 flex items-center justify-between">
+          <div>
+            <div class="text-[11px] font-bold text-[#8A5A44]">護眼定時 👀</div>
+            <div id="widget-eye-timer" class="text-sm font-black text-[#683F2C] mt-1">20:00</div>
+          </div>
+          <button id="widget-eye-toggle" onclick="toggleEyeTimer()" class="px-2.5 py-1.5 crayon-btn bg-white text-xs font-bold">
+            開始
+          </button>
+        </div>
+      </div>
+
+      <!-- THE 6 BOOK ICONS GRID -->
+      <div class="pt-1">
+        <h2 class="text-sm font-black text-[#6B5B52] mb-2.5 flex items-center">
+          <span class="mr-1.5">📚</span> 我的 6 本私密健康指南
+        </h2>
+
+        <div class="grid grid-cols-2 gap-3.5">
+          
+          <!-- Book 1: Period -->
+          <div onclick="openModal('modal-period')" class="book-spine bg-[#FFCAD4] crayon-card p-4 pl-6 cursor-pointer flex flex-col justify-between h-36">
+            <div class="flex justify-between items-start">
+              <span class="text-3xl filter drop-shadow">🌸</span>
+              <span id="badge-period" class="crayon-pill bg-white text-[10px] px-2 py-0.5 rounded-full font-black text-pink-600">
+                預測中
+              </span>
+            </div>
+            <div>
+              <h3 class="font-black text-base text-[#4E383C]">生理期之書</h3>
+              <p class="text-[11px] text-[#7A5B61] mt-0.5 line-clamp-1" id="dash-period-sub">記經期 & 排卵易孕</p>
+            </div>
+          </div>
+
+          <!-- Book 2: Health & Vision Report -->
+          <div onclick="openModal('modal-health')" class="book-spine bg-[#D8E2DC] crayon-card p-4 pl-6 cursor-pointer flex flex-col justify-between h-36">
+            <div class="flex justify-between items-start">
+              <span class="text-3xl filter drop-shadow">📋</span>
+              <span class="crayon-pill bg-white text-[10px] px-2 py-0.5 rounded-full font-black text-teal-700">
+                最新視力
+              </span>
+            </div>
+            <div>
+              <h3 class="font-black text-base text-[#384841]">健康報告簿</h3>
+              <p class="text-[11px] text-[#556960] mt-0.5 line-clamp-1">歷年健檢與雙眼度數</p>
+            </div>
+          </div>
+
+          <!-- Book 3: Supplements -->
+          <div onclick="openModal('modal-supplements')" class="book-spine bg-[#FFE5D9] crayon-card p-4 pl-6 cursor-pointer flex flex-col justify-between h-36">
+            <div class="flex justify-between items-start">
+              <span class="text-3xl filter drop-shadow">💊</span>
+              <span id="badge-supp-progress" class="crayon-pill bg-white text-[10px] px-2 py-0.5 rounded-full font-black text-amber-700">
+                0 / 0 已吃
+              </span>
+            </div>
+            <div>
+              <h3 class="font-black text-base text-[#523B33]">保健品指南</h3>
+              <p class="text-[11px] text-[#785C52] mt-0.5 line-clamp-1">每日服藥與營養打卡</p>
+            </div>
+          </div>
+
+          <!-- Book 4: Workouts -->
+          <div onclick="openModal('modal-workout')" class="book-spine bg-[#D0F4DE] crayon-card p-4 pl-6 cursor-pointer flex flex-col justify-between h-36">
+            <div class="flex justify-between items-start">
+              <span class="text-3xl filter drop-shadow">🏃‍♀️</span>
+              <span id="badge-workout-today" class="crayon-pill bg-white text-[10px] px-2 py-0.5 rounded-full font-black text-emerald-800">
+                0 分鐘
+              </span>
+            </div>
+            <div>
+              <h3 class="font-black text-base text-[#324D3E]">活力運動筆記</h3>
+              <p class="text-[11px] text-[#527260] mt-0.5 line-clamp-1">跑步瑜伽散步熱量</p>
+            </div>
+          </div>
+
+          <!-- Book 5: Diary & Mood -->
+          <div onclick="openModal('modal-diary')" class="book-spine bg-[#E8DFF5] crayon-card p-4 pl-6 cursor-pointer flex flex-col justify-between h-36">
+            <div class="flex justify-between items-start">
+              <span class="text-3xl filter drop-shadow">📖</span>
+              <span id="badge-today-mood" class="crayon-pill bg-white text-[10px] px-2 py-0.5 rounded-full font-black text-purple-700">
+                今天心情
+              </span>
+            </div>
+            <div>
+              <h3 class="font-black text-base text-[#463853]">暖心私密日記</h3>
+              <p class="text-[11px] text-[#69587B] mt-0.5 line-clamp-1">塗鴉心情與生活瑣碎</p>
+            </div>
+          </div>
+
+          <!-- Book 6: Reminders -->
+          <div onclick="openModal('modal-reminders')" class="book-spine bg-[#FDE2E4] crayon-card p-4 pl-6 cursor-pointer flex flex-col justify-between h-36">
+            <div class="flex justify-between items-start">
+              <span class="text-3xl filter drop-shadow">⏰</span>
+              <span class="crayon-pill bg-white text-[10px] px-2 py-0.5 rounded-full font-black text-rose-700">
+                提醒設定
+              </span>
+            </div>
+            <div>
+              <h3 class="font-black text-base text-[#523A3E]">小鬧鐘中心</h3>
+              <p class="text-[11px] text-[#7A5B61] mt-0.5 line-clamp-1">吃藥喝水定時小鈴鐺</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== MODAL OVERLAY & DRAWERS ==================== -->
+    <div id="modal-container" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex flex-col justify-end">
+      
+      <!-- Backdrop click area -->
+      <div class="flex-1" onclick="closeAllModals()"></div>
+
+      <!-- Shared Drawer Content Box (Max height 90vh for smooth phone scrolling) -->
+      <div id="modal-box" class="modal-sheet w-full max-w-md mx-auto bg-[#FFFDF9] border-t-4 border-l-4 border-r-4 border-[#5A4D41] rounded-t-[36px] max-h-[90vh] flex flex-col overflow-hidden shadow-2xl relative">
+        
+        <!-- Header Drag bar -->
+        <div class="w-12 h-1.5 bg-[#D6C7BE] rounded-full mx-auto my-3 cursor-pointer" onclick="closeAllModals()"></div>
+        
+        <!-- Header Title Bar -->
+        <div class="px-5 pb-3 flex items-center justify-between border-b border-[#F0E4DC]">
+          <div class="flex items-center space-x-2">
+            <span id="modal-icon" class="text-2xl">📖</span>
+            <h3 id="modal-title" class="text-lg font-black text-[#5A4D41]">筆記本</h3>
+          </div>
+          <button onclick="closeAllModals()" class="w-8 h-8 rounded-full border-2 border-[#5A4D41] bg-white flex items-center justify-center font-bold text-sm text-[#5A4D41] hover:bg-stone-100">
+            ✕
+          </button>
+        </div>
+
+        <!-- Scrollable Modal Body -->
+        <div id="modal-body-content" class="p-5 overflow-y-auto space-y-4 flex-1">
+          <!-- Dynamic Content Injected Here -->
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Template: Avatar Selector Modal Content -->
+    <template id="tpl-avatar-modal">
+      <div class="space-y-4 text-center">
+        <p class="text-xs text-[#7A6A5C]">挑選一個最像你今天模樣的小頭貼吧！</p>
+        <div class="grid grid-cols-4 gap-3 py-2">
+          <button onclick="selectAvatar('🐰')" class="text-3xl p-3 bg-[#FFCAD4] rounded-2xl border-2 border-[#5A4D41] hover:scale-105 transition-transform">🐰</button>
+          <button onclick="selectAvatar('🐻')" class="text-3xl p-3 bg-[#FFE5D9] rounded-2xl border-2 border-[#5A4D41] hover:scale-105 transition-transform">🐻</button>
+          <button onclick="selectAvatar('🐱')" class="text-3xl p-3 bg-[#D8E2DC] rounded-2xl border-2 border-[#5A4D41] hover:scale-105 transition-transform">🐱</button>
+          <button onclick="selectAvatar('🐶')" class="text-3xl p-3 bg-[#D0F4DE] rounded-2xl border-2 border-[#5A4D41] hover:scale-105 transition-transform">🐶</button>
+          <button onclick="selectAvatar('🐼')" class="text-3xl p-3 bg-[#E8DFF5] rounded-2xl border-2 border-[#5A4D41] hover:scale-105 transition-transform">🐼</button>
+          <button onclick="selectAvatar('🐥')" class="text-3xl p-3 bg-[#FFF3B0] rounded-2xl border-2 border-[#5A4D41] hover:scale-105 transition-transform">🐥</button>
+          <button onclick="selectAvatar('🍓')" class="text-3xl p-3 bg-[#FFCAD4] rounded-2xl border-2 border-[#5A4D41] hover:scale-105 transition-transform">🍓</button>
+          <button onclick="selectAvatar('🌸')" class="text-3xl p-3 bg-[#FFE5D9] rounded-2xl border-2 border-[#5A4D41] hover:scale-105 transition-transform">🌸</button>
+        </div>
+      </div>
+    </template>
+
+    <!-- Template: Settings & Export Modal -->
+    <template id="tpl-settings">
+      <div class="space-y-4">
+        <!-- Edit Profile -->
+        <div class="bg-[#FFF5EB] p-4 rounded-2xl border-2 border-[#5A4D41]">
+          <h4 class="font-bold text-sm text-[#5A4D41] mb-2 flex items-center"><span>👤</span><span class="ml-1.5">修改個人資料</span></h4>
+          <div class="space-y-2">
+            <div>
+              <label class="text-[11px] font-bold text-[#7A6A5C]">暱稱</label>
+              <input type="text" id="set-nickname" class="w-full px-3 py-1.5 rounded-xl border border-[#5A4D41] bg-white text-xs">
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-[#7A6A5C]">生日</label>
+              <input type="date" id="set-birthday" class="w-full px-3 py-1.5 rounded-xl border border-[#5A4D41] bg-white text-xs">
+            </div>
+            <button onclick="saveProfileSettings()" class="w-full mt-2 py-2 crayon-btn bg-[#FFCAD4] text-xs">儲存個人資料</button>
+          </div>
+        </div>
+
+        <!-- Add to iOS Home screen tutorial -->
+        <div class="bg-[#E8DFF5] p-4 rounded-2xl border-2 border-[#5A4D41]">
+          <h4 class="font-bold text-sm text-[#463853] mb-1 flex items-center"><span>📲</span><span class="ml-1.5">如何放到 iPhone 桌面上</span></h4>
+          <ol class="text-xs text-[#5E4C6E] list-decimal list-inside space-y-1 mt-1 leading-relaxed">
+            <li>使用 iPhone 內建的 <b>Safari 瀏覽器</b> 打開本網頁。</li>
+            <li>點擊螢幕最下方的 <b>「分享按鈕（方形帶向上箭頭）」</b>。</li>
+            <li>往下滑動，選擇 <b>「加入主畫面 (Add to Home Screen)」</b>。</li>
+            <li>點擊右上角「新增」，手機桌面就有可愛的小粉彩圖示囉！</li>
+          </ol>
+        </div>
+
+        <!-- Data Backup & Clear -->
+        <div class="bg-[#F8F9FA] p-4 rounded-2xl border-2 border-[#5A4D41] space-y-2.5">
+          <h4 class="font-bold text-sm text-[#5A4D41]">📦 隱私與備份</h4>
+          <p class="text-[11px] text-[#7A6A5C]">你的資料全數儲存於這支手機內，安全無外洩風險。可隨時備份：</p>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="exportDataBackup()" class="py-2 crayon-btn bg-white text-xs">匯出 JSON 備份</button>
+            <button onclick="triggerImport()" class="py-2 crayon-btn bg-white text-xs">匯入備份檔</button>
+          </div>
+          <input type="file" id="file-import" accept=".json" class="hidden" onchange="importDataBackup(event)">
+          <button onclick="promptResetAll()" class="w-full py-2 crayon-btn bg-rose-100 text-rose-800 text-xs">⚠️ 清空所有資料重置</button>
+        </div>
+      </div>
+    </template>
+
+    <!-- Template: 1. 生理期之書 -->
+    <template id="tpl-period">
+      <div class="space-y-4">
+        <!-- Next Period Prediction Card -->
+        <div class="bg-[#FFCAD4] crayon-card p-4 text-[#4E383C]">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold uppercase tracking-wider">🌸 經期預測演算</span>
+            <span id="period-status-tag" class="text-[10px] bg-white px-2 py-0.5 rounded-full font-bold">推算中</span>
+          </div>
+          <div class="mt-2 text-center py-2">
+            <div class="text-xs">預計下次月經到來日</div>
+            <div id="pred-next-date" class="text-xl font-black mt-0.5 text-pink-700">-- 月 -- 日</div>
+            <div id="pred-ovulation-date" class="text-[11px] text-[#7A5B61] mt-1">易孕排卵期：--</div>
+          </div>
+        </div>
+
+        <!-- Fast Period Logging Form -->
+        <div class="bg-white crayon-card p-4 space-y-3">
+          <h4 class="text-xs font-bold text-[#5A4D41]">➕ 記錄本次生理期</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] font-bold text-[#8A7968]">開始日期</label>
+              <input type="date" id="period-start" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+            </div>
+            <div>
+              <label class="text-[10px] font-bold text-[#8A7968]">結束日期 (可後補)</label>
+              <input type="date" id="period-end" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+            </div>
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-[#8A7968]">經期狀況 / 感受標籤</label>
+            <div class="flex flex-wrap gap-1.5 mt-1" id="period-tag-container">
+              <button type="button" onclick="toggleTag(this)" class="tag-chip text-[11px] px-2.5 py-1 rounded-full border border-stone-400 bg-stone-50">輕微悶痛</button>
+              <button type="button" onclick="toggleTag(this)" class="tag-chip text-[11px] px-2.5 py-1 rounded-full border border-stone-400 bg-stone-50">劇烈經痛</button>
+              <button type="button" onclick="toggleTag(this)" class="tag-chip text-[11px] px-2.5 py-1 rounded-full border border-stone-400 bg-stone-50">胸部脹痛</button>
+              <button type="button" onclick="toggleTag(this)" class="tag-chip text-[11px] px-2.5 py-1 rounded-full border border-stone-400 bg-stone-50">易怒疲憊</button>
+              <button type="button" onclick="toggleTag(this)" class="tag-chip text-[11px] px-2.5 py-1 rounded-full border border-stone-400 bg-stone-50">爆痘</button>
+              <button type="button" onclick="toggleTag(this)" class="tag-chip text-[11px] px-2.5 py-1 rounded-full border border-stone-400 bg-stone-50">一切平穩</button>
+            </div>
+          </div>
+          <button onclick="addPeriodRecord()" class="w-full py-2 crayon-btn bg-[#FFCAD4] text-xs">新增經期紀錄 🌸</button>
+        </div>
+
+        <!-- History Records -->
+        <div>
+          <h4 class="text-xs font-black text-[#5A4D41] mb-2">📜 歷次經期紀錄</h4>
+          <div id="period-history-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+            <!-- Dynamic items -->
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Template: 2. 健康報告簿 (含視力) -->
+    <template id="tpl-health">
+      <div class="space-y-4">
+        <!-- Sub-tabs: 視力紀錄 vs 健檢報告 -->
+        <div class="grid grid-cols-2 gap-2 bg-[#E9EFEA] p-1 rounded-2xl border border-[#5A4D41]">
+          <button id="health-tab-btn-vision" onclick="switchHealthTab('vision')" class="py-1.5 text-xs font-black rounded-xl bg-white shadow-sm text-[#384841]">
+            👀 視力追蹤專頁
+          </button>
+          <button id="health-tab-btn-checkup" onclick="switchHealthTab('checkup')" class="py-1.5 text-xs font-black rounded-xl text-[#6B7E76]">
+            🩺 歷年健檢摘要
+          </button>
+        </div>
+
+        <!-- Tab 1: Vision Section -->
+        <div id="health-sec-vision" class="space-y-3">
+          <div class="bg-[#FFFDF9] crayon-card p-3.5 space-y-2.5">
+            <h4 class="text-xs font-black text-[#384841]">➕ 登記最新驗光 / 視力度數</h4>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] font-bold text-stone-600">左眼 (L) 近視/遠視</label>
+                <input type="text" id="vis-left" placeholder="-3.50 (350度)" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+              </div>
+              <div>
+                <label class="text-[10px] font-bold text-stone-600">右眼 (R) 近視/遠視</label>
+                <input type="text" id="vis-right" placeholder="-3.25 (325度)" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] font-bold text-stone-600">散光 (度數 / 軸度)</label>
+                <input type="text" id="vis-astig" placeholder="左-0.75 / 右-0.50" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+              </div>
+              <div>
+                <label class="text-[10px] font-bold text-stone-600">眼壓 / 視力備註</label>
+                <input type="text" id="vis-notes" placeholder="正常 14 mmHg，乾眼" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+              </div>
+            </div>
+            <button onclick="addVisionRecord()" class="w-full py-2 crayon-btn bg-[#D8E2DC] text-xs">儲存視力紀錄</button>
+          </div>
+
+          <h5 class="text-xs font-black text-[#384841]">👓 視力歷程</h5>
+          <div id="vision-history-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+        </div>
+
+        <!-- Tab 2: General Checkup Section -->
+        <div id="health-sec-checkup" class="hidden space-y-3">
+          <div class="bg-[#FFFDF9] crayon-card p-3.5 space-y-2.5">
+            <h4 class="text-xs font-black text-[#384841]">➕ 新增體檢數值紀錄</h4>
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="text-[10px] font-bold text-stone-600">體檢年份</label>
+                <input type="number" id="chk-year" value="2026" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+              </div>
+              <div>
+                <label class="text-[10px] font-bold text-stone-600">收縮/舒張壓</label>
+                <input type="text" id="chk-bp" placeholder="115/75" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+              </div>
+              <div>
+                <label class="text-[10px] font-bold text-stone-600">體重 (kg)</label>
+                <input type="number" id="chk-weight" step="0.1" placeholder="52.0" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+              </div>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold text-stone-600">健檢結論 / 需留意事項 (如: 膽固醇、脂肪肝)</label>
+              <textarea id="chk-summary" rows="2" placeholder="紅字項目與醫師叮嚀..." class="w-full p-2 border rounded-xl text-xs"></textarea>
+            </div>
+            <button onclick="addCheckupRecord()" class="w-full py-2 crayon-btn bg-[#D8E2DC] text-xs">儲存健檢檔案</button>
+          </div>
+
+          <h5 class="text-xs font-black text-[#384841]">📁 歷年報告存檔</h5>
+          <div id="checkup-history-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Template: 3. 保健品指南 -->
+    <template id="tpl-supplements">
+      <div class="space-y-4">
+        <!-- Daily Tracker Header -->
+        <div class="bg-[#FFE5D9] crayon-card p-3.5 flex items-center justify-between">
+          <div>
+            <div class="text-[11px] font-bold text-[#8A5A44]">今日日常打卡日</div>
+            <div id="supp-today-date" class="text-sm font-black text-[#523B33]">-- 月 -- 日</div>
+          </div>
+          <button onclick="resetSupplementsDaily()" class="text-[10px] px-2.5 py-1 crayon-btn bg-white">
+            重新整理今日
+          </button>
+        </div>
+
+        <!-- Daily Supplement Checklist -->
+        <div>
+          <h4 class="text-xs font-black text-[#5A4D41] mb-2">💊 今日吃了沒？(點擊勾選)</h4>
+          <div id="supplements-checklist" class="space-y-2">
+            <!-- Dynamic checklist items -->
+          </div>
+        </div>
+
+        <!-- Add Custom Supplement -->
+        <div class="bg-white crayon-card p-3.5 space-y-2.5">
+          <h4 class="text-xs font-bold text-[#5A4D41]">➕ 新增常備保健品 / 藥品</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" id="new-supp-name" placeholder="名稱 (如: 葉黃素、B群)" class="px-2 py-1.5 border rounded-xl text-xs">
+            <input type="text" id="new-supp-time" placeholder="服用時機 (如: 飯後、睡前)" class="px-2 py-1.5 border rounded-xl text-xs">
+          </div>
+          <button onclick="addNewSupplementItem()" class="w-full py-2 crayon-btn bg-[#FFE5D9] text-xs">加入我的常備品清單</button>
+        </div>
+      </div>
+    </template>
+
+    <!-- Template: 4. 活力運動筆記 -->
+    <template id="tpl-workout">
+      <div class="space-y-4">
+        <!-- Today Total -->
+        <div class="bg-[#D0F4DE] crayon-card p-3.5 flex justify-around text-center">
+          <div>
+            <span class="text-[10px] font-bold text-[#3B6651]">今日累積運動</span>
+            <div id="workout-stat-minutes" class="text-xl font-black text-[#264D3B]">0 分鐘</div>
+          </div>
+          <div class="border-r border-[#9FD4B4]"></div>
+          <div>
+            <span class="text-[10px] font-bold text-[#3B6651]">消耗估算</span>
+            <div id="workout-stat-calories" class="text-xl font-black text-[#264D3B]">0 kcal</div>
+          </div>
+        </div>
+
+        <!-- Add Workout Form -->
+        <div class="bg-white crayon-card p-3.5 space-y-2.5">
+          <h4 class="text-xs font-bold text-[#5A4D41]">➕ 登記今日流汗時光</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] font-bold text-stone-600">運動項目</label>
+              <select id="work-type" class="w-full px-2 py-1.5 border rounded-xl text-xs bg-white">
+                <option value="快走散步">🚶‍♀️ 快走散步</option>
+                <option value="慢跑有氧">🏃 慢跑有氧</option>
+                <option value="舒緩瑜伽">🧘‍♀️ 舒緩瑜伽</option>
+                <option value="重量訓練">🏋️ 重量訓練</option>
+                <option value="核心伸展">🤸‍♀️ 核心伸展</option>
+                <option value="游泳羽球">🏊 游泳 / 羽球</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold text-stone-600">時長 (分鐘)</label>
+              <input type="number" id="work-duration" placeholder="30" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+            </div>
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-stone-600">運動心得 / 今日小成就</label>
+            <input type="text" id="work-notes" placeholder="拉筋超舒服、心情變很好！" class="w-full px-2 py-1.5 border rounded-xl text-xs">
+          </div>
+          <button onclick="addWorkoutRecord()" class="w-full py-2 crayon-btn bg-[#D0F4DE] text-xs">保存運動紀錄</button>
+        </div>
+
+        <!-- Workout History -->
+        <div>
+          <h4 class="text-xs font-black text-[#5A4D41] mb-2">🏅 運動打卡足跡</h4>
+          <div id="workout-history-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Template: 5. 暖心私密日記 -->
+    <template id="tpl-diary">
+      <div class="space-y-4">
+        <!-- New Diary Card -->
+        <div class="bg-white crayon-card p-3.5 space-y-3">
+          <h4 class="text-xs font-black text-[#463853]">✏️ 今日心情塗鴉與隨筆</h4>
+          
+          <!-- Mood Selection -->
+          <div>
+            <span class="text-[10px] font-bold text-[#7A6A5C] block mb-1">今日的心情狀態：</span>
+            <div class="grid grid-cols-5 gap-1.5 text-center" id="diary-mood-picker">
+              <button type="button" onclick="selectDiaryMood(this, '超開心 🥳')" class="mood-btn py-2 border rounded-xl border-stone-300 text-lg hover:bg-yellow-50 active:scale-90 transition-transform">🥳</button>
+              <button type="button" onclick="selectDiaryMood(this, '平靜美好 🌿')" class="mood-btn py-2 border rounded-xl border-stone-300 text-lg hover:bg-green-50 active:scale-90 transition-transform">🌿</button>
+              <button type="button" onclick="selectDiaryMood(this, '有點疲憊 🥱')" class="mood-btn py-2 border rounded-xl border-stone-300 text-lg hover:bg-purple-50 active:scale-90 transition-transform">🥱</button>
+              <button type="button" onclick="selectDiaryMood(this, '焦慮煩悶 😣')" class="mood-btn py-2 border rounded-xl border-stone-300 text-lg hover:bg-amber-50 active:scale-90 transition-transform">😣</button>
+              <button type="button" onclick="selectDiaryMood(this, '低落想哭 🌧️')" class="mood-btn py-2 border rounded-xl border-stone-300 text-lg hover:bg-blue-50 active:scale-90 transition-transform">🌧️</button>
+            </div>
+            <input type="hidden" id="selected-diary-mood" value="平靜美好 🌿">
+          </div>
+
+          <!-- Diary Text -->
+          <div>
+            <textarea id="diary-text" rows="3" placeholder="寫下一點今天的小想法、吃了什麼好吃、或是對自己的悄悄話..." class="w-full p-2.5 border rounded-2xl text-xs bg-[#FFFDF8] focus:outline-none"></textarea>
+          </div>
+
+          <button onclick="addDiaryEntry()" class="w-full py-2 crayon-btn bg-[#E8DFF5] text-xs">鎖進粉彩日記本 🔒</button>
+        </div>
+
+        <!-- History Diaries -->
+        <div>
+          <h4 class="text-xs font-black text-[#5A4D41] mb-2">💌 過去的私密篇章</h4>
+          <div id="diary-history-list" class="space-y-2.5 max-h-48 overflow-y-auto"></div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Template: 6. 小鬧鐘提醒中心 -->
+    <template id="tpl-reminders">
+      <div class="space-y-4">
+        <div class="bg-[#FDE2E4] crayon-card p-3 text-xs text-[#6B4B52] leading-relaxed">
+          🔔 <b>日常貼心小鈴鐺</b><br>
+          幫你設定好規律作息。開啟後將在瀏覽中或定時為你彈出溫柔提醒！
+        </div>
+
+        <div class="space-y-2.5">
+          <!-- Reminder 1: Period -->
+          <div class="bg-white p-3 rounded-2xl border-2 border-[#5A4D41] flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-2xl">🌸</span>
+              <div>
+                <div class="text-xs font-bold text-[#5A4D41]">經期來臨前 3 天提醒</div>
+                <div class="text-[10px] text-stone-500">自動根據經期預測演算提醒備棉</div>
+              </div>
+            </div>
+            <input type="checkbox" id="rem-period" onchange="toggleReminderSetting('period', this.checked)" class="w-5 h-5 accent-pink-400">
+          </div>
+
+          <!-- Reminder 2: Medicine & Supplements -->
+          <div class="bg-white p-3 rounded-2xl border-2 border-[#5A4D41] flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-2xl">💊</span>
+              <div>
+                <div class="text-xs font-bold text-[#5A4D41]">定時吃藥 / 保健品</div>
+                <div class="text-[10px] text-stone-500">每日 09:00 與 21:00 準時打卡</div>
+              </div>
+            </div>
+            <input type="checkbox" id="rem-supps" onchange="toggleReminderSetting('supps', this.checked)" class="w-5 h-5 accent-amber-400">
+          </div>
+
+          <!-- Reminder 3: Water Hourly -->
+          <div class="bg-white p-3 rounded-2xl border-2 border-[#5A4D41] flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-2xl">💧</span>
+              <div>
+                <div class="text-xs font-bold text-[#5A4D41]">每小時喝水提示</div>
+                <div class="text-[10px] text-stone-500">白天工作/上課定時補充足夠水分</div>
+              </div>
+            </div>
+            <input type="checkbox" id="rem-water" onchange="toggleReminderSetting('water', this.checked)" class="w-5 h-5 accent-emerald-400">
+          </div>
+
+          <!-- Reminder 4: Eye Rest 30 min -->
+          <div class="bg-white p-3 rounded-2xl border-2 border-[#5A4D41] flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-2xl">👀</span>
+              <div>
+                <div class="text-xs font-bold text-[#5A4D41]">用眼 30 分鐘休息提示</div>
+                <div class="text-[10px] text-stone-500">護眼 20-20-20 法則遠眺放鬆</div>
+              </div>
+            </div>
+            <input type="checkbox" id="rem-eye" onchange="toggleReminderSetting('eye', this.checked)" class="w-5 h-5 accent-indigo-400">
+          </div>
+        </div>
+
+        <button onclick="testNotificationBeep()" class="w-full py-2.5 crayon-btn bg-white text-xs text-[#5A4D41]">
+          🎵 測試暖心小音效提醒
+        </button>
+      </div>
+    </template>
+
+    <!-- Global Floating Feedback Toast -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#5A4D41] text-white text-xs px-4 py-2 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+      已儲存
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * App State & LocalStorage Schema
+     */
+    const STORAGE_KEY = 'HEALTH_DIARY_APP_STATE_V1';
+
+    const defaultState = {
+      profile: {
+        nickname: '',
+        birthday: '',
+        gender: 'female',
+        avatar: '🐰'
+      },
+      isOnboarded: false,
+      pwaTipDismissed: false,
+      waterCount: 0,
+      lastWaterDate: '',
+      reminders: {
+        period: true,
+        supps: true,
+        water: true,
+        eye: false
+      },
+      periodRecords: [
+        // { id, start: '2026-09-10', end: '2026-09-15', tags: ['輕微悶痛'] }
+      ],
+      visionRecords: [
+        // { id, date: '2026-08-01', left: '-3.50', right: '-3.25', astig: '-0.50', notes: '眼壓正常' }
+      ],
+      checkupRecords: [
+        // { id, year: '2026', bp: '115/75', weight: '51.5', summary: '一切良好' }
+      ],
+      supplements: [
+        { id: 'sup1', name: '葉黃素', time: '飯後', checkedToday: false },
+        { id: 'sup2', name: '綜合維他命 B 群', time: '早上', checkedToday: false },
+        { id: 'sup3', name: '深海魚油', time: '隨餐', checkedToday: false }
+      ],
+      supplementsDate: '',
+      workouts: [
+        // { id, date: '2026-10-02', type: '快走散步', duration: 30, calories: 120, notes: '微出汗' }
+      ],
+      diaries: [
+        // { id, date: '2026-10-01', mood: '超開心 🥳', text: '今天買到了好看的蠟筆筆記本！' }
+      ]
+    };
+
+    let appState = JSON.parse(JSON.stringify(defaultState));
+
+    // Daily Warm Quotes
+    const warmQuotes = [
+      "今天也要好好喝水，溫柔愛自己～",
+      "深呼吸，給雙眼看一會兒遠方的綠色吧！",
+      "步伐慢慢也沒關係，有在前進就好 🌱",
+      "記得吃維他命，元氣滿滿的一天！",
+      "今天也要對鏡子裡的自己甜甜微笑喔 💖",
+      "好好吃飯，好好睡覺，健康是最大的超能力 ✨"
+    ];
+
+    // Eye timer variables
+    let eyeTimerInterval = null;
+    let eyeSecondsLeft = 20 * 60; // 20 mins standard rule
+    let isEyeTimerRunning = false;
+
+    // Load initial data
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          appState = Object.assign({}, defaultState, JSON.parse(saved));
+        }
+      } catch (e) {
+        console.error("Failed to parse state", e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.error("Failed to save state", e);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      checkDailyResets();
+      renderAppView();
+      setupOnboardingForm();
+    });
+
+    function checkDailyResets() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      if (appState.lastWaterDate !== todayStr) {
+        appState.waterCount = 0;
+        appState.lastWaterDate = todayStr;
+      }
+      if (appState.supplementsDate !== todayStr) {
+        appState.supplements.forEach(s => s.checkedToday = false);
+        appState.supplementsDate = todayStr;
+      }
+      saveState();
+    }
+
+    function renderAppView() {
+      const obView = document.getElementById('view-onboarding');
+      const dashView = document.getElementById('view-dashboard');
+
+      if (!appState.isOnboarded) {
+        obView.classList.remove('hidden');
+        dashView.classList.add('hidden');
+      } else {
+        obView.classList.add('hidden');
+        dashView.classList.remove('hidden');
+        updateDashboard();
+      }
+    }
+
+    function setupOnboardingForm() {
+      const form = document.getElementById('onboarding-form');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nickname = document.getElementById('ob-nickname').value.trim();
+        const birthday = document.getElementById('ob-birthday').value;
+        const gender = document.querySelector('input[name="ob-gender"]:checked').value;
+
+        if (!nickname || !birthday) return;
+
+        appState.profile.nickname = nickname;
+        appState.profile.birthday = birthday;
+        appState.profile.gender = gender;
+        appState.isOnboarded = true;
+        saveState();
+
+        showToast(`歡迎你，${nickname}寶寶！💕`);
+        renderAppView();
+      });
+    }
+
+    function updateDashboard() {
+      // User Profile
+      document.getElementById('dash-nickname').textContent = appState.profile.nickname || '寶貝';
+      document.getElementById('dash-avatar').textContent = appState.profile.avatar || '🐰';
+      
+      // Random warm quote
+      const qIndex = Math.floor(Math.random() * warmQuotes.length);
+      document.getElementById('dash-quote').textContent = warmQuotes[qIndex];
+
+      // PWA banner
+      if (appState.pwaTipDismissed) {
+        document.getElementById('ios-pwa-tip').classList.add('hidden');
+      }
+
+      // Water counter
+      document.getElementById('widget-water-count').textContent = appState.waterCount;
+
+      // Supplements badge
+      const totalSupp = appState.supplements.length;
+      const doneSupp = appState.supplements.filter(s => s.checkedToday).length;
+      document.getElementById('badge-supp-progress').textContent = `${doneSupp}/${totalSupp} 已吃`;
+
+      // Workouts badge (today)
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayMinutes = appState.workouts
+        .filter(w => w.date === todayStr)
+        .reduce((sum, w) => sum + (parseInt(w.duration) || 0), 0);
+      document.getElementById('badge-workout-today').textContent = `${todayMinutes} 分鐘`;
+
+      // Mood badge
+      const todayDiary = appState.diaries.find(d => d.date === todayStr);
+      if (todayDiary) {
+        document.getElementById('badge-today-mood').textContent = todayDiary.mood.split(' ')[0];
+      }
+
+      // Period forecast badge
+      updatePeriodBadge();
+    }
+
+    function dismissPwaTip() {
+      document.getElementById('ios-pwa-tip').classList.add('hidden');
+      appState.pwaTipDismissed = true;
+      saveState();
+    }
+
+    function addWaterCup(amount) {
+      appState.waterCount = Math.min(16, appState.waterCount + amount);
+      document.getElementById('widget-water-count').textContent = appState.waterCount;
+      saveState();
+      showToast(`喝了一大杯水 💧 總計 ${appState.waterCount} 杯！`);
+    }
+
+    function toggleEyeTimer() {
+      const btn = document.getElementById('widget-eye-toggle');
+      if (isEyeTimerRunning) {
+        clearInterval(eyeTimerInterval);
+        isEyeTimerRunning = false;
+        btn.textContent = '繼續';
+        btn.classList.remove('bg-rose-200');
+        btn.classList.add('bg-white');
+      } else {
+        isEyeTimerRunning = true;
+        btn.textContent = '暫停';
+        btn.classList.remove('bg-white');
+        btn.classList.add('bg-rose-200');
+
+        eyeTimerInterval = setInterval(() => {
+          if (eyeSecondsLeft > 0) {
+            eyeSecondsLeft--;
+            const mins = String(Math.floor(eyeSecondsLeft / 60)).padStart(2, '0');
+            const secs = String(eyeSecondsLeft % 60).padStart(2, '0');
+            document.getElementById('widget-eye-timer').textContent = `${mins}:${secs}`;
+          } else {
+            clearInterval(eyeTimerInterval);
+            isEyeTimerRunning = false;
+            eyeSecondsLeft = 20 * 60;
+            document.getElementById('widget-eye-timer').textContent = '20:00';
+            btn.textContent = '開始';
+            testNotificationBeep();
+            showToast('👀 護眼時間到！快讓眼睛望向 6 米外 20 秒～');
+          }
+        }, 1000);
+      }
+    }
+
+    function openModal(type) {
+      const container = document.getElementById('modal-container');
+      const body = document.getElementById('modal-body-content');
+      const titleEl = document.getElementById('modal-title');
+      const iconEl = document.getElementById('modal-icon');
+
+      body.innerHTML = '';
+
+      if (type === 'modal-period') {
+        iconEl.textContent = '🌸';
+        titleEl.textContent = '生理期之書';
+        body.innerHTML = document.getElementById('tpl-period').innerHTML;
+        renderPeriodModal();
+      } else if (type === 'modal-health') {
+        iconEl.textContent = '📋';
+        titleEl.textContent = '健康報告簿';
+        body.innerHTML = document.getElementById('tpl-health').innerHTML;
+        renderHealthModal();
+      } else if (type === 'modal-supplements') {
+        iconEl.textContent = '💊';
+        titleEl.textContent = '保健品指南';
+        body.innerHTML = document.getElementById('tpl-supplements').innerHTML;
+        renderSupplementsModal();
+      } else if (type === 'modal-workout') {
+        iconEl.textContent = '🏃‍♀️';
+        titleEl.textContent = '活力運動筆記';
+        body.innerHTML = document.getElementById('tpl-workout').innerHTML;
+        renderWorkoutModal();
+      } else if (type === 'modal-diary') {
+        iconEl.textContent = '📖';
+        titleEl.textContent = '暖心私密日記';
+        body.innerHTML = document.getElementById('tpl-diary').innerHTML;
+        renderDiaryModal();
+      } else if (type === 'modal-reminders') {
+        iconEl.textContent = '⏰';
+        titleEl.textContent = '小鬧鐘中心';
+        body.innerHTML = document.getElementById('tpl-reminders').innerHTML;
+        renderRemindersModal();
+      } else if (type === 'modal-settings') {
+        iconEl.textContent = '⚙️';
+        titleEl.textContent = '日誌設定與備份';
+        body.innerHTML = document.getElementById('tpl-settings').innerHTML;
+        renderSettingsModal();
+      }
+
+      container.classList.remove('hidden');
+    }
+
+    function closeAllModals() {
+      document.getElementById('modal-container').classList.add('hidden');
+    }
+
+    function openAvatarSelector() {
+      const container = document.getElementById('modal-container');
+      const body = document.getElementById('modal-body-content');
+      document.getElementById('modal-icon').textContent = '🎨';
+      document.getElementById('modal-title').textContent = '挑選個人頭貼';
+      body.innerHTML = document.getElementById('tpl-avatar-modal').innerHTML;
+      container.classList.remove('hidden');
+    }
+
+    function selectAvatar(emoji) {
+      appState.profile.avatar = emoji;
+      saveState();
+      updateDashboard();
+      closeAllModals();
+      showToast(`頭像已換成可愛的 ${emoji}`);
+    }
+
+    function updatePeriodBadge() {
+      if (!appState.periodRecords || appState.periodRecords.length === 0) {
+        document.getElementById('badge-period').textContent = '未登記';
+        return;
+      }
+      const last = appState.periodRecords[0];
+      const lastDate = new Date(last.start);
+      // Standard 28-day cycle prediction
+      const nextDate = new Date(lastDate);
+      nextDate.setDate(nextDate.getDate() + 28);
+
+      const today = new Date();
+      const diffTime = nextDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays <= 0 && diffDays >= -5) {
+        document.getElementById('badge-period').textContent = '經期中';
+      } else if (diffDays > 0) {
+        document.getElementById('badge-period').textContent = `約 ${diffDays} 天後`;
+      } else {
+        document.getElementById('badge-period').textContent = '推算中';
+      }
+    }
+
+    function renderPeriodModal() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const startInput = document.getElementById('period-start');
+      if (startInput) startInput.value = todayStr;
+
+      // Calculate predictions
+      if (appState.periodRecords.length > 0) {
+        const last = appState.periodRecords[0];
+        const lastDate = new Date(last.start);
+        
+        const nextDate = new Date(lastDate);
+        nextDate.setDate(nextDate.getDate() + 28);
+        
+        const ovulStart = new Date(lastDate);
+        ovulStart.setDate(ovulStart.getDate() + 12);
+        const ovulEnd = new Date(lastDate);
+        ovulEnd.setDate(ovulEnd.getDate() + 16);
+
+        document.getElementById('pred-next-date').textContent = `${nextDate.getMonth()+1} 月 ${nextDate.getDate()} 日`;
+        document.getElementById('pred-ovulation-date').textContent = 
+          `易孕排卵期：${ovulStart.getMonth()+1}/${ovulStart.getDate()} ~ ${ovulEnd.getMonth()+1}/${ovulEnd.getDate()}`;
+        document.getElementById('period-status-tag').textContent = '已智慧推算';
+      }
+
+      // Render History
+      const histList = document.getElementById('period-history-list');
+      if (!histList) return;
+      histList.innerHTML = '';
+
+      if (appState.periodRecords.length === 0) {
+        histList.innerHTML = '<div class="text-xs text-stone-400 py-3 text-center">尚未有紀錄，在上方新增吧！</div>';
+        return;
+      }
+
+      appState.periodRecords.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'bg-stone-50 border rounded-2xl p-2.5 flex items-center justify-between text-xs';
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-[#5A4D41]">開始：${item.start} ${item.end ? '至 ' + item.end : ''}</div>
+            <div class="text-[10px] text-pink-600 mt-0.5">${item.tags ? item.tags.join('、') : '一般'}</div>
+          </div>
+          <button onclick="deletePeriodRecord(${idx})" class="text-stone-400 hover:text-red-500 text-xs px-2 py-1">刪除</button>
+        `;
+        histList.appendChild(div);
+      });
+    }
+
+    function toggleTag(btn) {
+      if (btn.classList.contains('bg-pink-200')) {
+        btn.classList.remove('bg-pink-200', 'border-pink-500', 'text-pink-800');
+        btn.classList.add('bg-stone-50', 'border-stone-400');
+      } else {
+        btn.classList.add('bg-pink-200', 'border-pink-500', 'text-pink-800');
+        btn.classList.remove('bg-stone-50', 'border-stone-400');
+      }
+    }
+
+    function addPeriodRecord() {
+      const start = document.getElementById('period-start').value;
+      const end = document.getElementById('period-end').value;
+      const activeTags = Array.from(document.querySelectorAll('#period-tag-container .tag-chip.bg-pink-200')).map(b => b.textContent);
+
+      if (!start) {
+        showToast('請至少選擇開始日期喔！');
+        return;
+      }
+
+      appState.periodRecords.unshift({
+        id: Date.now(),
+        start,
+        end,
+        tags: activeTags
+      });
+
+      saveState();
+      updateDashboard();
+      renderPeriodModal();
+      showToast('🌸 生理期已紀錄完畢！');
+    }
+
+    function deletePeriodRecord(idx) {
+      appState.periodRecords.splice(idx, 1);
+      saveState();
+      updateDashboard();
+      renderPeriodModal();
+      showToast('已刪除此筆經期紀錄');
+    }
+
+    function renderHealthModal() {
+      renderVisionList();
+      renderCheckupList();
+    }
+
+    function switchHealthTab(tab) {
+      const visSec = document.getElementById('health-sec-vision');
+      const chkSec = document.getElementById('health-sec-checkup');
+      const visBtn = document.getElementById('health-tab-btn-vision');
+      const chkBtn = document.getElementById('health-tab-btn-checkup');
+
+      if (tab === 'vision') {
+        visSec.classList.remove('hidden');
+        chkSec.classList.add('hidden');
+        visBtn.classList.add('bg-white', 'shadow-sm', 'text-[#384841]');
+        visBtn.classList.remove('text-[#6B7E76]');
+        chkBtn.classList.remove('bg-white', 'shadow-sm', 'text-[#384841]');
+        chkBtn.classList.add('text-[#6B7E76]');
+      } else {
+        chkSec.classList.remove('hidden');
+        visSec.classList.add('hidden');
+        chkBtn.classList.add('bg-white', 'shadow-sm', 'text-[#384841]');
+        chkBtn.classList.remove('text-[#6B7E76]');
+        visBtn.classList.remove('bg-white', 'shadow-sm', 'text-[#384841]');
+        visBtn.classList.add('text-[#6B7E76]');
+      }
+    }
+
+    function addVisionRecord() {
+      const left = document.getElementById('vis-left').value.trim();
+      const right = document.getElementById('vis-right').value.trim();
+      const astig = document.getElementById('vis-astig').value.trim();
+      const notes = document.getElementById('vis-notes').value.trim();
+      const date = new Date().toISOString().split('T')[0];
+
+      if (!left && !right) {
+        showToast('請填寫至少一眼的度數喔！');
+        return;
+      }
+
+      appState.visionRecords.unshift({
+        id: Date.now(),
+        date,
+        left: left || '無',
+        right: right || '無',
+        astig: astig || '無',
+        notes: notes || '正常'
+      });
+
+      saveState();
+      renderVisionList();
+      showToast('👀 視力數值已保存');
+    }
+
+    function renderVisionList() {
+      const list = document.getElementById('vision-history-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (appState.visionRecords.length === 0) {
+        list.innerHTML = '<div class="text-xs text-stone-400 py-3 text-center">尚未有視力記錄</div>';
+        return;
+      }
+
+      appState.visionRecords.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'bg-stone-50 border rounded-2xl p-2.5 flex items-center justify-between text-xs';
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-[#384841]">${item.date} 驗光</div>
+            <div class="text-[11px] text-stone-600 mt-0.5">左眼: ${item.left} ｜ 右眼: ${item.right}</div>
+            <div class="text-[10px] text-stone-400">散光: ${item.astig} · ${item.notes}</div>
+          </div>
+          <button onclick="deleteVisionRecord(${idx})" class="text-stone-400 hover:text-red-500 text-xs px-2 py-1">刪除</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function deleteVisionRecord(idx) {
+      appState.visionRecords.splice(idx, 1);
+      saveState();
+      renderVisionList();
+      showToast('已刪除視力紀錄');
+    }
+
+    function addCheckupRecord() {
+      const year = document.getElementById('chk-year').value;
+      const bp = document.getElementById('chk-bp').value.trim();
+      const weight = document.getElementById('chk-weight').value.trim();
+      const summary = document.getElementById('chk-summary').value.trim();
+
+      if (!year || !summary) {
+        showToast('請填寫年份與摘要結論喔！');
+        return;
+      }
+
+      appState.checkupRecords.unshift({
+        id: Date.now(),
+        year,
+        bp: bp || '未測',
+        weight: weight ? `${weight} kg` : '未測',
+        summary
+      });
+
+      saveState();
+      renderCheckupList();
+      showToast('🩺 健檢報告摘要已記錄');
+    }
+
+    function renderCheckupList() {
+      const list = document.getElementById('checkup-history-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (appState.checkupRecords.length === 0) {
+        list.innerHTML = '<div class="text-xs text-stone-400 py-3 text-center">尚未儲存歷年健檢</div>';
+        return;
+      }
+
+      appState.checkupRecords.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'bg-stone-50 border rounded-2xl p-2.5 flex items-center justify-between text-xs';
+        div.innerHTML = `
+          <div class="space-y-0.5">
+            <div class="font-bold text-[#384841]">${item.year} 年度健檢</div>
+            <div class="text-[11px] text-stone-600">血壓: ${item.bp} ｜ 體重: ${item.weight}</div>
+            <div class="text-[11px] text-amber-800 bg-amber-50 rounded px-1.5 py-0.5 inline-block">${item.summary}</div>
+          </div>
+          <button onclick="deleteCheckupRecord(${idx})" class="text-stone-400 hover:text-red-500 text-xs px-2 py-1">刪除</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function deleteCheckupRecord(idx) {
+      appState.checkupRecords.splice(idx, 1);
+      saveState();
+      renderCheckupList();
+      showToast('已刪除該健檢紀錄');
+    }
+
+    function renderSupplementsModal() {
+      const today = new Date();
+      const dateEl = document.getElementById('supp-today-date');
+      if (dateEl) {
+        dateEl.textContent = `${today.getMonth() + 1} 月 ${today.getDate()} 日`;
+      }
+
+      const list = document.getElementById('supplements-checklist');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (appState.supplements.length === 0) {
+        list.innerHTML = '<div class="text-xs text-stone-400 py-3 text-center">還沒有保健品清單，從下方新增吧！</div>';
+        return;
+      }
+
+      appState.supplements.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-2xl border-2 border-[#5A4D41] flex items-center justify-between transition-colors ${item.checkedToday ? 'bg-amber-100/70 line-through opacity-80' : 'bg-white'}`;
+        div.innerHTML = `
+          <div class="flex items-center space-x-2.5 cursor-pointer" onclick="toggleSupplementCheck(${idx})">
+            <input type="checkbox" ${item.checkedToday ? 'checked' : ''} class="w-5 h-5 accent-amber-500 rounded">
+            <div>
+              <div class="text-xs font-black text-[#5A4D41]">${item.name}</div>
+              <div class="text-[10px] text-stone-500">${item.time}</div>
+            </div>
+          </div>
+          <button onclick="removeSupplementItem(${idx})" class="text-stone-400 hover:text-red-500 text-xs px-2">✕</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function toggleSupplementCheck(idx) {
+      appState.supplements[idx].checkedToday = !appState.supplements[idx].checkedToday;
+      saveState();
+      updateDashboard();
+      renderSupplementsModal();
+      if (appState.supplements[idx].checkedToday) {
+        showToast(`已吃：${appState.supplements[idx].name} ✨`);
+      }
+    }
+
+    function addNewSupplementItem() {
+      const name = document.getElementById('new-supp-name').value.trim();
+      const time = document.getElementById('new-supp-time').value.trim();
+
+      if (!name) {
+        showToast('請填寫保健品名稱');
+        return;
+      }
+
+      appState.supplements.push({
+        id: 'sup_' + Date.now(),
+        name,
+        time: time || '隨餐',
+        checkedToday: false
+      });
+
+      saveState();
+      updateDashboard();
+      renderSupplementsModal();
+      document.getElementById('new-supp-name').value = '';
+      document.getElementById('new-supp-time').value = '';
+      showToast('已加入新保健品');
+    }
+
+    function removeSupplementItem(idx) {
+      appState.supplements.splice(idx, 1);
+      saveState();
+      updateDashboard();
+      renderSupplementsModal();
+      showToast('已移除保健品');
+    }
+
+    function resetSupplementsDaily() {
+      appState.supplements.forEach(s => s.checkedToday = false);
+      saveState();
+      updateDashboard();
+      renderSupplementsModal();
+      showToast('已重設今日打卡狀態');
+    }
+
+    function renderWorkoutModal() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayItems = appState.workouts.filter(w => w.date === todayStr);
+
+      const mins = todayItems.reduce((acc, c) => acc + (parseInt(c.duration) || 0), 0);
+      const cals = todayItems.reduce((acc, c) => acc + (parseInt(c.calories) || 0), 0);
+
+      document.getElementById('workout-stat-minutes').textContent = `${mins} 分鐘`;
+      document.getElementById('workout-stat-calories').textContent = `${cals} kcal`;
+
+      const list = document.getElementById('workout-history-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (appState.workouts.length === 0) {
+        list.innerHTML = '<div class="text-xs text-stone-400 py-3 text-center">今天還沒開始運動，隨意散個步吧！</div>';
+        return;
+      }
+
+      appState.workouts.forEach((w, idx) => {
+        const div = document.createElement('div');
+        div.className = 'bg-stone-50 border rounded-2xl p-2.5 flex items-center justify-between text-xs';
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-[#324D3E]">${w.date} · ${w.type} (${w.duration} 分鐘)</div>
+            <div class="text-[10px] text-emerald-700">約消耗 ${w.calories} kcal · ${w.notes || '真棒！'}</div>
+          </div>
+          <button onclick="deleteWorkoutRecord(${idx})" class="text-stone-400 hover:text-red-500 text-xs px-2 py-1">刪除</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function addWorkoutRecord() {
+      const type = document.getElementById('work-type').value;
+      const duration = parseInt(document.getElementById('work-duration').value) || 0;
+      const notes = document.getElementById('work-notes').value.trim();
+      const date = new Date().toISOString().split('T')[0];
+
+      if (duration <= 0) {
+        showToast('請輸入運動分鐘數喔！');
+        return;
+      }
+
+      // Simple MET calorie estimation (approx 5 kcal per min moderate activity)
+      const estimatedCals = Math.round(duration * 4.8);
+
+      appState.workouts.unshift({
+        id: Date.now(),
+        date,
+        type,
+        duration,
+        calories: estimatedCals,
+        notes
+      });
+
+      saveState();
+      updateDashboard();
+      renderWorkoutModal();
+      document.getElementById('work-duration').value = '';
+      document.getElementById('work-notes').value = '';
+      showToast('🏃‍♀️ 運動打卡成功，你超棒！');
+    }
+
+    function deleteWorkoutRecord(idx) {
+      appState.workouts.splice(idx, 1);
+      saveState();
+      updateDashboard();
+      renderWorkoutModal();
+      showToast('已刪除運動紀錄');
+    }
+
+    function renderDiaryModal() {
+      const list = document.getElementById('diary-history-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (appState.diaries.length === 0) {
+        list.innerHTML = '<div class="text-xs text-stone-400 py-3 text-center">還沒有寫下任何日記呢，寫一句送給今天的自己吧！</div>';
+        return;
+      }
+
+      appState.diaries.forEach((d, idx) => {
+        const div = document.createElement('div');
+        div.className = 'bg-[#FAF7F2] border-2 border-[#D6C7BE] rounded-2xl p-3 text-xs space-y-1';
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-[#463853]">${d.date}</span>
+            <span class="bg-white px-2 py-0.5 rounded-full border text-[10px]">${d.mood}</span>
+          </div>
+          <p class="text-stone-700 whitespace-pre-wrap leading-relaxed pt-1">${escapeHtml(d.text)}</p>
+          <div class="text-right pt-1">
+            <button onclick="deleteDiaryEntry(${idx})" class="text-stone-400 hover:text-red-500 text-[10px]">刪除這篇</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function selectDiaryMood(btn, moodStr) {
+      document.querySelectorAll('#diary-mood-picker .mood-btn').forEach(b => {
+        b.classList.remove('bg-purple-200', 'border-purple-600', 'scale-110');
+      });
+      btn.classList.add('bg-purple-200', 'border-purple-600', 'scale-110');
+      document.getElementById('selected-diary-mood').value = moodStr;
+    }
+
+    function addDiaryEntry() {
+      const text = document.getElementById('diary-text').value.trim();
+      const mood = document.getElementById('selected-diary-mood').value;
+      const date = new Date().toISOString().split('T')[0];
+
+      if (!text) {
+        showToast('隨意寫幾個字紀錄今天吧～');
+        return;
+      }
+
+      appState.diaries.unshift({
+        id: Date.now(),
+        date,
+        mood,
+        text
+      });
+
+      saveState();
+      updateDashboard();
+      renderDiaryModal();
+      document.getElementById('diary-text').value = '';
+      showToast('💌 日記已悄悄鎖進筆記本囉！');
+    }
+
+    function deleteDiaryEntry(idx) {
+      appState.diaries.splice(idx, 1);
+      saveState();
+      updateDashboard();
+      renderDiaryModal();
+      showToast('已刪除該篇日記');
+    }
+
+    function renderRemindersModal() {
+      document.getElementById('rem-period').checked = !!appState.reminders.period;
+      document.getElementById('rem-supps').checked = !!appState.reminders.supps;
+      document.getElementById('rem-water').checked = !!appState.reminders.water;
+      document.getElementById('rem-eye').checked = !!appState.reminders.eye;
+    }
+
+    function toggleReminderSetting(key, isChecked) {
+      appState.reminders[key] = isChecked;
+      saveState();
+      showToast(`已${isChecked ? '開啟' : '關閉'}此項提醒設定`);
+    }
+
+    function testNotificationBeep() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        // Cute bell chord
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      } catch (err) {
+        console.warn('Audio Context error', err);
+      }
+      showToast('🔔 叮咚！溫柔提醒測試成功');
+    }
+
+    function renderSettingsModal() {
+      document.getElementById('set-nickname').value = appState.profile.nickname || '';
+      document.getElementById('set-birthday').value = appState.profile.birthday || '';
+    }
+
+    function saveProfileSettings() {
+      const nick = document.getElementById('set-nickname').value.trim();
+      const bday = document.getElementById('set-birthday').value;
+
+      if (!nick) {
+        showToast('暱稱不能為空喔！');
+        return;
+      }
+
+      appState.profile.nickname = nick;
+      appState.profile.birthday = bday;
+      saveState();
+      updateDashboard();
+      closeAllModals();
+      showToast('個人檔案已更新！');
+    }
+
+    function exportDataBackup() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `健康日誌_備份_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('📦 備份檔案已下載！');
+    }
+
+    function triggerImport() {
+      document.getElementById('file-import').click();
+    }
+
+    function importDataBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.profile) {
+            appState = Object.assign({}, defaultState, imported);
+            saveState();
+            updateDashboard();
+            closeAllModals();
+            showToast('✅ 備份資料匯入成功！');
+          } else {
+            showToast('❌ 備份檔格式不正確');
+          }
+        } catch (err) {
+          showToast('❌ 讀取備份檔案失敗');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function promptResetAll() {
+      // Custom double-confirm without browser confirm()
+      const confirmContainer = document.createElement('div');
+      confirmContainer.className = 'p-4 bg-rose-50 border-2 border-rose-400 rounded-2xl text-center space-y-3 mt-3';
+      confirmContainer.innerHTML = `
+        <div class="text-xs font-bold text-rose-800">確定要清空所有紀錄重新開始嗎？此操作無法還原！</div>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="executeResetAll()" class="py-1.5 crayon-btn bg-rose-500 text-white text-xs">確定清空</button>
+          <button onclick="this.parentElement.parentElement.remove()" class="py-1.5 crayon-btn bg-white text-xs">取消</button>
+        </div>
+      `;
+      document.getElementById('modal-body-content').appendChild(confirmContainer);
+    }
+
+    function executeResetAll() {
+      localStorage.removeItem(STORAGE_KEY);
+      appState = JSON.parse(JSON.stringify(defaultState));
+      saveState();
+      closeAllModals();
+      renderAppView();
+      showToast('已重設為初始狀態');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2400);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
