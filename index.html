@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Health-diary</title>
+  <title>健康日誌 Health-diary</title>
   
   <!-- iOS PWA 支援 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,15 +16,15 @@
       --bg-cream: #FFFDF9;
       --pink-soft: #FFCAD4;
       --pink-crayon: #F4ACB7;
-      --pink-light: #FFE5EC;
+      --pink-dark: #D87D8A;
       --green-soft: #D8E2DC;
-      --green-dark: #83A598;
+      --green-dark: #7A9E8F;
       --peach-soft: #FFE5D9;
       --purple-soft: #E8DFF5;
       --blue-soft: #D0F4DE;
+      --yellow-soft: #FFF1BD;
       --text-main: #5D5452;
       --text-muted: #8F8583;
-      --crayon-border: #E8C2B9;
       --card-shadow: 0 4px 14px rgba(184, 155, 150, 0.15);
     }
 
@@ -33,7 +33,7 @@
       -webkit-tap-highlight-color: transparent;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "Comic Sans MS", "PingFang TC", "Microsoft JhengHei", sans-serif;
     }
 
     body {
@@ -41,17 +41,14 @@
       color: var(--text-main);
       overflow-x: hidden;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
       user-select: none;
     }
 
-    /* 頂部安全區域（適應 iPhone 瀏海與動態島） */
     .safe-top {
-      padding-top: env(safe-area-inset-top, 24px);
+      padding-top: env(safe-area-inset-top, 20px);
     }
     .safe-bottom {
-      padding-bottom: env(safe-area-inset-bottom, 24px);
+      padding-bottom: env(safe-area-inset-bottom, 20px);
     }
 
     /* 容器架構 */
@@ -60,55 +57,53 @@
       min-height: 100vh;
       width: 100%;
       flex-direction: column;
-      animation: fadeIn 0.25s ease-out;
+      animation: fadeIn 0.2s ease-out;
     }
     .view-container.active {
       display: flex;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ====== 畫面 1：首次建立用戶 ====== */
+    /* ====== 畫面 1：首次建立帳戶 ====== */
     #setup-view {
-      padding: 40px 24px;
+      padding: 30px 20px;
       justify-content: center;
       align-items: center;
     }
 
     .setup-card {
       background: #FFFFFF;
-      border: 2px dashed var(--pink-crayon);
+      border: 3px dashed var(--pink-crayon);
       border-radius: 32px;
-      padding: 32px 24px;
+      padding: 28px 22px;
       width: 100%;
       max-width: 380px;
-      box-shadow: var(--card-shadow);
+      box-shadow: 0 8px 24px rgba(244, 172, 183, 0.25);
       text-align: center;
     }
 
     .setup-title {
-      font-size: 23px;
+      font-size: 22px;
       font-weight: 800;
-      color: #D87D8A;
+      color: var(--pink-dark);
       margin-bottom: 6px;
-      letter-spacing: 0.5px;
     }
 
     .setup-subtitle {
       font-size: 14px;
       color: var(--text-muted);
-      margin-bottom: 26px;
+      margin-bottom: 22px;
     }
 
-    /* 大頭貼上傳器 */
     .avatar-picker-wrap {
       position: relative;
-      width: 96px;
-      height: 96px;
-      margin: 0 auto 24px auto;
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 20px auto;
     }
     .avatar-preview {
       width: 100%;
@@ -117,16 +112,16 @@
       object-fit: cover;
       border: 3px solid var(--pink-soft);
       background-color: var(--peach-soft);
-      box-shadow: 0 4px 10px rgba(244, 172, 183, 0.3);
+      box-shadow: 0 4px 10px rgba(244, 172, 183, 0.35);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 36px;
+      overflow: hidden;
     }
     .avatar-preview img {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
       object-fit: cover;
     }
     .avatar-camera-btn {
@@ -146,24 +141,21 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.15);
       cursor: pointer;
     }
-    #avatar-file-input {
-      display: none;
-    }
+    #avatar-file-input { display: none; }
 
     .form-group {
       text-align: left;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .form-group label {
       display: block;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 8px;
+      font-size: 13.5px;
+      font-weight: 800;
+      margin-bottom: 7px;
       color: #6C5E5B;
     }
 
-    /* 輸入框修復防跑框 */
     .crayon-input {
       width: 100% !important;
       min-height: 48px;
@@ -174,10 +166,10 @@
       font-size: 15px;
       color: var(--text-main);
       outline: none;
-      -webkit-appearance: none;
-      appearance: none;
       box-sizing: border-box;
-      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
     }
     .crayon-input:focus {
       border-color: var(--pink-crayon);
@@ -194,8 +186,8 @@
       border-radius: 16px;
       border: 2px solid #F1D4CD;
       background: #FFFDF9;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 13.5px;
+      font-weight: 700;
       color: var(--text-main);
       cursor: pointer;
       text-align: center;
@@ -223,22 +215,21 @@
       transform: scale(0.98);
     }
 
-    /* ====== 畫面 2：主首頁 ====== */
+    /* ====== 畫面 2：主頁首頁 ====== */
     #dashboard-view {
-      padding: 18px 20px 40px 20px;
+      padding: 16px 18px 40px 18px;
     }
 
-    /* 頂部歡迎列 */
     .dash-topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
     .dash-profile {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
     .dash-avatar {
       width: 58px;
@@ -259,10 +250,6 @@
       height: 100%;
       object-fit: cover;
     }
-    .dash-welcome {
-      display: flex;
-      flex-direction: column;
-    }
     .dash-greeting {
       font-size: 20px;
       font-weight: 800;
@@ -274,8 +261,8 @@
       margin-top: 3px;
     }
     .gear-btn {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: white;
       border: 2px solid #EFE4E1;
@@ -292,7 +279,7 @@
       font-size: 16px;
       font-weight: 800;
       color: #796A68;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -305,66 +292,91 @@
       border-radius: 4px;
     }
 
-    /* 6 本小筆記本 Grid */
+    /* ====== 核心：還原第一版 6 本手繪活頁本樣式 ====== */
     .books-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: 14px;
     }
 
-    .book-card {
+    .notebook-card {
       position: relative;
       border-radius: 20px;
-      padding: 18px 16px;
-      min-height: 135px;
+      padding: 16px 14px 16px 28px;
+      min-height: 138px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       cursor: pointer;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 6px 16px rgba(184, 155, 150, 0.18), inset 0 0 0 1.5px rgba(255, 255, 255, 0.6);
+      transition: transform 0.12s, box-shadow 0.12s;
       overflow: hidden;
-      border-left: 8px solid rgba(0,0,0,0.08); /* 模擬書脊裝訂感 */
+      background-size: 100% 100%;
     }
-    .book-card:active {
+    .notebook-card:active {
       transform: scale(0.97);
     }
 
-    /* 書本主題色彩 */
-    .book-period  { background: linear-gradient(145deg, #FFE5EC, #FFCAD4); border: 2px solid #F4ACB7; }
-    .book-report  { background: linear-gradient(145deg, #EBF4F6, #D8E2DC); border: 2px solid #A8C9B9; }
-    .book-supple  { background: linear-gradient(145deg, #FFF1E6, #FFE5D9); border: 2px solid #F7C59F; }
-    .book-sport   { background: linear-gradient(145deg, #E8F8F5, #D0F4DE); border: 2px solid #99E2B4; }
-    .book-diary   { background: linear-gradient(145deg, #F3EAF8, #E8DFF5); border: 2px solid #CDB4DB; }
-    .book-alarm   { background: linear-gradient(145deg, #FFF7D6, #FFEAA7); border: 2px solid #FCD34D; }
-
-    .book-icon {
-      font-size: 34px;
+    /* 左側書脊裝訂邊帶與打孔環 */
+    .notebook-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 18px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.05);
+      border-right: 2px dashed rgba(255, 255, 255, 0.6);
     }
-    .book-name {
-      font-size: 17px;
+    .notebook-ring {
+      position: absolute;
+      left: 6px;
+      width: 7px;
+      height: 12px;
+      background: #FFFFFF;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    .ring-1 { top: 22px; }
+    .ring-2 { top: calc(50% - 6px); }
+    .ring-3 { bottom: 22px; }
+
+    /* 6 本書個別粉彩配色 */
+    .book-period { background: linear-gradient(135deg, #FFE8EE, #FFCAD4); border: 2px solid #F4ACB7; }
+    .book-report { background: linear-gradient(135deg, #EEF6F3, #D8E2DC); border: 2px solid #ADC5BA; }
+    .book-supple { background: linear-gradient(135deg, #FFF5ED, #FFE5D9); border: 2px solid #F5C6AA; }
+    .book-sport  { background: linear-gradient(135deg, #EDFAF2, #D0F4DE); border: 2px solid #9DE0BA; }
+    .book-diary  { background: linear-gradient(135deg, #F6F0FA, #E8DFF5); border: 2px solid #D0BBE5; }
+    .book-alarm  { background: linear-gradient(135deg, #FFFCEB, #FFEAA7); border: 2px solid #F9D56E; }
+
+    .notebook-icon {
+      font-size: 32px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+    }
+    .notebook-title {
+      font-size: 16px;
       font-weight: 800;
       color: #4A3E3D;
-      margin-top: 8px;
+      margin-top: 6px;
     }
-    .book-desc {
+    .notebook-sub {
       font-size: 11px;
       color: #7A6967;
       margin-top: 2px;
     }
 
-    /* ====== 側邊滑出選單 (Drawer) ====== */
+    /* ====== 側邊選單 (Drawer) ====== */
     .sidebar-mask {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(40, 30, 30, 0.4);
+      background: rgba(40, 30, 30, 0.45);
       z-index: 998;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: opacity 0.28s ease;
     }
     .sidebar-mask.show {
       opacity: 1;
@@ -375,14 +387,14 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 66.6%; /* 佔畫面的 2/3 */
+      width: 66.6%;
       max-width: 320px;
       height: 100%;
       background: #FFFDF9;
       box-shadow: 4px 0 25px rgba(0,0,0,0.18);
       z-index: 999;
       transform: translateX(-100%);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
       border-right: 2px solid #F1E5E2;
@@ -390,9 +402,8 @@
     .sidebar.open {
       transform: translateX(0);
     }
-
     .sidebar-header {
-      padding: calc(env(safe-area-inset-top, 24px) + 20px) 18px 18px 18px;
+      padding: calc(env(safe-area-inset-top, 20px) + 20px) 18px 18px 18px;
       background: linear-gradient(135deg, #FFE5EC, #FFFDF9);
       border-bottom: 2px dashed #E8D3CE;
       display: flex;
@@ -400,8 +411,8 @@
       gap: 12px;
     }
     .sidebar-avatar {
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       background: var(--peach-soft);
       border: 2px solid var(--pink-crayon);
@@ -412,17 +423,8 @@
       justify-content: center;
       font-size: 22px;
     }
-    .sidebar-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .sidebar-name {
-      font-size: 17px;
-      font-weight: 800;
-      color: #4A3E3D;
-    }
-
+    .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .sidebar-name { font-size: 16px; font-weight: 800; color: #4A3E3D; }
     .sidebar-menu {
       flex: 1;
       padding: 16px 12px;
@@ -437,28 +439,24 @@
       gap: 12px;
       padding: 12px 14px;
       border-radius: 16px;
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 700;
       color: #5D504E;
       cursor: pointer;
-      transition: background 0.15s;
     }
-    .sidebar-item:active, .sidebar-item.current {
-      background-color: #F8ECE9;
-      color: #9C4153;
-    }
+    .sidebar-item:active { background: #F8ECE9; color: #9C4153; }
     .sidebar-footer {
       padding: 16px;
       border-top: 1px solid #EFE4E1;
       margin-bottom: env(safe-area-inset-bottom, 16px);
     }
 
-    /* ====== 書本獨立詳細分頁架構 ====== */
+    /* ====== 獨立頁面共用 Header & Card ====== */
     .page-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 20px;
+      padding: 14px 18px;
       border-bottom: 1.5px solid #F1E5E2;
       background: #FFFDF9;
       position: sticky;
@@ -471,33 +469,26 @@
       font-size: 22px;
       color: #6C5D5B;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       width: 36px;
       height: 36px;
       border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .page-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #4A3E3D;
-    }
-    .page-content {
-      padding: 20px;
-      flex: 1;
-    }
+    .page-title { font-size: 17px; font-weight: 800; color: #4A3E3D; }
+    .page-content { padding: 18px; flex: 1; }
 
     .card-box {
       background: white;
-      border-radius: 22px;
-      padding: 20px;
+      border-radius: 20px;
+      padding: 18px;
       border: 1.5px solid #F1E5E2;
       box-shadow: var(--card-shadow);
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
     .card-title {
-      font-size: 16px;
+      font-size: 15.5px;
       font-weight: 800;
       margin-bottom: 12px;
       color: #5D4D4B;
@@ -505,6 +496,87 @@
       align-items: center;
       gap: 8px;
     }
+
+    /* ====== 生日可愛手繪彈窗 ====== */
+    .birthday-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .birthday-modal.show { display: flex; }
+    .bday-dialog {
+      background: #FFFDF9;
+      border: 3px solid var(--pink-crayon);
+      border-radius: 28px;
+      padding: 22px;
+      width: 100%;
+      max-width: 340px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    .bday-title { font-size: 18px; font-weight: 800; color: var(--pink-dark); margin-bottom: 14px; }
+    .bday-selectors {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .bday-select {
+      flex: 1;
+      padding: 10px;
+      border-radius: 14px;
+      border: 2px solid #F1D4CD;
+      background: white;
+      font-size: 14px;
+      font-weight: 700;
+      color: #5D5452;
+      outline: none;
+    }
+
+    /* ====== 宮廷月誌專用日曆網格 ====== */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .cal-header { font-size: 11px; font-weight: 700; color: #8F8583; padding: 4px 0; }
+    .cal-day {
+      aspect-ratio: 1;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      color: #5D5452;
+    }
+    .cal-day.period { background: #FFAAA6; color: white; border-radius: 50%; }
+    .cal-day.ovulation { background: #D0F4DE; color: #1E4E30; border: 1px dashed #7AD8A6; }
+    .cal-day.predict { background: #FFE5EC; color: #C2596C; }
+
+    /* ====== 喝水進度杯視覺 ====== */
+    .water-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 12px 0;
+    }
+    .water-cup {
+      font-size: 26px;
+      cursor: pointer;
+      opacity: 0.35;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .water-cup.drank { opacity: 1; transform: scale(1.1); }
   </style>
 </head>
 <body class="safe-top safe-bottom">
@@ -512,7 +584,7 @@
   <!-- 側邊選單遮罩 -->
   <div id="sidebar-mask" class="sidebar-mask"></div>
 
-  <!-- 左側滑出選單（寬度 2/3） -->
+  <!-- 左側滑出選單（2/3 寬度） -->
   <nav id="sidebar" class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-avatar" id="sidebar-avatar-box">🌸</div>
@@ -548,7 +620,20 @@
     </div>
   </nav>
 
-  <!-- ================= VIEW 1：首次建立帳戶 ================= -->
+  <!-- 可愛生日挑選器彈窗 -->
+  <div id="birthday-modal" class="birthday-modal">
+    <div class="bday-dialog">
+      <div class="bday-title">🎂 選擇出生年月日</div>
+      <div class="bday-selectors">
+        <select id="bday-year" class="bday-select"></select>
+        <select id="bday-month" class="bday-select"></select>
+        <select id="bday-day" class="bday-select"></select>
+      </div>
+      <button class="btn-crayon-primary" onclick="confirmBirthday()">選好囉 ✨</button>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 1：首次建立用戶 ================= -->
   <div id="setup-view" class="view-container">
     <div class="setup-card">
       <div class="avatar-picker-wrap" onclick="document.getElementById('avatar-file-input').click()">
@@ -569,11 +654,11 @@
 
       <div class="form-group">
         <label>你的生日</label>
-        <input type="date" id="setup-birth" class="crayon-input">
+        <div class="crayon-input" id="bday-display" onclick="openBirthdayPicker()">點擊選擇生日 🎂</div>
       </div>
 
       <div class="form-group">
-        <label>性別</label>
+        <label>性別（輔助週期運算）</label>
         <div class="gender-chips">
           <div class="gender-chip-btn selected" onclick="selectGender(this, '女')">女生 🌸</div>
           <div class="gender-chip-btn" onclick="selectGender(this, '男')">男生 🌱</div>
@@ -581,7 +666,7 @@
         </div>
       </div>
 
-      <button class="btn-crayon-primary" onclick="completeSetup()">走進健康日誌 ✨</button>
+      <button class="btn-crayon-primary" onclick="completeSetup()">開始我的健康旅程 ✨</button>
     </div>
   </div>
 
@@ -600,58 +685,77 @@
 
     <div class="section-headline">我的Health-diary</div>
 
+    <!-- 6 本第一版活頁裝訂筆記本 -->
     <div class="books-grid">
       <!-- 1. 生理期 -->
-      <div class="book-card book-period" onclick="navigateTo('view-period')">
-        <div class="book-icon">🌸</div>
+      <div class="notebook-card book-period" onclick="navigateTo('view-period')">
+        <div class="notebook-ring ring-1"></div>
+        <div class="notebook-ring ring-2"></div>
+        <div class="notebook-ring ring-3"></div>
+        <div class="notebook-icon">🌸</div>
         <div>
-          <div class="book-name">宮廷月誌</div>
-          <div class="book-desc">生理週期與排卵推算</div>
+          <div class="notebook-title">宮廷月誌</div>
+          <div class="notebook-sub">生理週期與排卵推算</div>
         </div>
       </div>
 
       <!-- 2. 健檢報告 -->
-      <div class="book-card book-report" onclick="navigateTo('view-report')">
-        <div class="book-icon">📋</div>
+      <div class="notebook-card book-report" onclick="navigateTo('view-report')">
+        <div class="notebook-ring ring-1"></div>
+        <div class="notebook-ring ring-2"></div>
+        <div class="notebook-ring ring-3"></div>
+        <div class="notebook-icon">📋</div>
         <div>
-          <div class="book-name">健檢報告</div>
-          <div class="book-desc">歷年檢查與視力追蹤</div>
+          <div class="notebook-title">健檢報告</div>
+          <div class="notebook-sub">歷年檢查與視力追蹤</div>
         </div>
       </div>
 
       <!-- 3. 保健品 -->
-      <div class="book-card book-supple" onclick="navigateTo('view-supple')">
-        <div class="book-icon">💊</div>
+      <div class="notebook-card book-supple" onclick="navigateTo('view-supple')">
+        <div class="notebook-ring ring-1"></div>
+        <div class="notebook-ring ring-2"></div>
+        <div class="notebook-ring ring-3"></div>
+        <div class="notebook-icon">💊</div>
         <div>
-          <div class="book-name">保健品指南</div>
-          <div class="book-desc">每日清單與打卡紀錄</div>
+          <div class="notebook-title">保健品指南</div>
+          <div class="notebook-sub">每日清單與打卡紀錄</div>
         </div>
       </div>
 
       <!-- 4. 運動 -->
-      <div class="book-card book-sport" onclick="navigateTo('view-sport')">
-        <div class="book-icon">🏃‍♀️</div>
+      <div class="notebook-card book-sport" onclick="navigateTo('view-sport')">
+        <div class="notebook-ring ring-1"></div>
+        <div class="notebook-ring ring-2"></div>
+        <div class="notebook-ring ring-3"></div>
+        <div class="notebook-icon">🏃‍♀️</div>
         <div>
-          <div class="book-name">循身而動</div>
-          <div class="book-desc">活力鍛鍊與汗水日記</div>
+          <div class="notebook-title">循身而動</div>
+          <div class="notebook-sub">活力鍛鍊與汗水日記</div>
         </div>
       </div>
 
       <!-- 5. 日記 -->
-      <div class="book-card book-diary" onclick="navigateTo('view-diary')">
-        <div class="book-icon">📖</div>
+      <div class="notebook-card book-diary" onclick="navigateTo('view-diary')">
+        <div class="notebook-ring ring-1"></div>
+        <div class="notebook-ring ring-2"></div>
+        <div class="notebook-ring ring-3"></div>
+        <div class="notebook-icon">📖</div>
         <div>
-          <div class="book-name">微光時刻</div>
-          <div class="book-desc">心情小語與今日碎碎念</div>
+          <div class="notebook-title">微光時刻</div>
+          <div class="notebook-sub">心情小語與今日碎碎念</div>
         </div>
       </div>
 
       <!-- 6. 小鬧鐘 -->
-      <div class="book-card book-alarm" onclick="navigateTo('view-alarm')">
-        <div class="book-icon">⏰</div>
+      <div class="notebook-card book-alarm" onclick="navigateTo('view-alarm')">
+        <div class="notebook-ring ring-1"></div>
+        <div class="notebook-ring ring-2"></div>
+        <div class="notebook-ring ring-3"></div>
+        <div class="notebook-icon">⏰</div>
         <div>
-          <div class="book-name">小鬧鐘</div>
-          <div class="book-desc">喝水、眼休與按時吃藥</div>
+          <div class="notebook-title">小鬧鐘</div>
+          <div class="notebook-sub">喝水、眼休與按時吃藥</div>
         </div>
       </div>
     </div>
@@ -666,19 +770,33 @@
     </div>
     <div class="page-content">
       <div class="card-box">
-        <div class="card-title">📅 本次經期狀態</div>
-        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
-          距離下次預測經期還有：<strong style="color: #E05780; font-size: 18px;"> 12 天</strong><br>
-          推估排卵期危險期：<strong style="color: #6A8D73;">4月10日 ~ 4月16日</strong>
+        <div class="card-title">📅 本月週期推算日曆</div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">
+          ● 粉紅：月經期 ● 淺綠：排卵危險期 ● 虛線：預測日
         </p>
-        <button class="btn-crayon-primary" style="margin-top: 14px;" onclick="alert('🌸 月經來訪打卡成功！')">月經今天來了 🩸</button>
+        <div class="calendar-grid">
+          <div class="cal-header">日</div><div class="cal-header">一</div><div class="cal-header">二</div>
+          <div class="cal-header">三</div><div class="cal-header">四</div><div class="cal-header">五</div><div class="cal-header">六</div>
+          
+          <div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div>
+          <div class="cal-day period">5</div><div class="cal-day period">6</div><div class="cal-day period">7</div>
+          <div class="cal-day period">8</div><div class="cal-day period">9</div><div class="cal-day">10</div><div class="cal-day">11</div>
+          <div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day">15</div>
+          <div class="cal-day ovulation">16</div><div class="cal-day ovulation">17</div><div class="cal-day ovulation">18</div>
+          <div class="cal-day ovulation">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
+          <div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div>
+          <div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
+        </div>
+        <button class="btn-crayon-primary" style="margin-top: 14px;" onclick="alert('🩸 今日月經來訪打卡成功！')">今天月經來了 🩸</button>
       </div>
+
       <div class="card-box">
-        <div class="card-title">📝 身體小症狀筆記</div>
+        <div class="card-title">🩺 體感症狀勾選</div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <span style="background: #FFE5EC; padding: 6px 12px; border-radius: 12px; font-size: 13px;">輕微腹痛</span>
-          <span style="background: #FFF1E6; padding: 6px 12px; border-radius: 12px; font-size: 13px;">偏頭痛</span>
-          <span style="background: #E8DFF5; padding: 6px 12px; border-radius: 12px; font-size: 13px;">心情微焦慮</span>
+          <span style="background: #FFE5EC; padding: 6px 12px; border-radius: 12px; font-size: 13px;">腹部悶痛</span>
+          <span style="background: #FFF1E6; padding: 6px 12px; border-radius: 12px; font-size: 13px;">腰痠</span>
+          <span style="background: #E8DFF5; padding: 6px 12px; border-radius: 12px; font-size: 13px;">胸脹</span>
+          <span style="background: #D8E2DC; padding: 6px 12px; border-radius: 12px; font-size: 13px;">食慾大增</span>
         </div>
       </div>
     </div>
@@ -692,24 +810,38 @@
       <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
     </div>
     <div class="page-content">
+      <!-- 視力專區 -->
       <div class="card-box">
         <div class="card-title">👀 視力追蹤專區</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-          <div style="background: #F8FAF9; padding: 10px; border-radius: 14px; text-align: center;">
-            <div style="font-size: 12px; color: #8F8583;">左眼 (L)</div>
-            <div style="font-size: 20px; font-weight: 800; color: #4A3E3D;">1.0</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+          <div style="background: #F9FAF9; padding: 12px; border-radius: 16px; text-align: center; border: 1.5px solid #E5EBE8;">
+            <div style="font-size: 12px; color: var(--text-muted);">左眼 (L) 裸視/散光</div>
+            <div style="font-size: 20px; font-weight: 800; color: #4A3E3D; margin-top: 4px;">1.0 / 50°</div>
           </div>
-          <div style="background: #F8FAF9; padding: 10px; border-radius: 14px; text-align: center;">
-            <div style="font-size: 12px; color: #8F8583;">右眼 (R)</div>
-            <div style="font-size: 20px; font-weight: 800; color: #4A3E3D;">0.9</div>
+          <div style="background: #F9FAF9; padding: 12px; border-radius: 16px; text-align: center; border: 1.5px solid #E5EBE8;">
+            <div style="font-size: 12px; color: var(--text-muted);">右眼 (R) 裸視/散光</div>
+            <div style="font-size: 20px; font-weight: 800; color: #4A3E3D; margin-top: 4px;">0.9 / 75°</div>
           </div>
         </div>
-        <button class="btn-crayon-primary" style="background: linear-gradient(135deg, #D8E2DC, #C1D5CB); color: #2C4236;" onclick="alert('視力已儲存')">更新視力數據</button>
+        <button class="btn-crayon-primary" style="background: linear-gradient(135deg, #D8E2DC, #C1D5CB); color: #2C4236;" onclick="alert('視力已儲存紀錄！')">更新視力數據</button>
       </div>
 
       <div class="card-box">
-        <div class="card-title">📂 歷年健康總結</div>
-        <p style="font-size: 13px; color: var(--text-muted);">2025 年度健檢：數值皆正常，血紅素稍偏低，請記得補充鐵質與深色蔬菜 🌱</p>
+        <div class="card-title">📑 歷年重要指標</div>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+          <div style="display: flex; justify-content: space-between; padding-bottom: 6px; border-bottom: 1px dashed #EFE4E1;">
+            <span>血壓 (收縮/舒張)</span>
+            <strong>110 / 72 mmHg</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding-bottom: 6px; border-bottom: 1px dashed #EFE4E1;">
+            <span>空腹血糖</span>
+            <strong>88 mg/dL</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>總膽固醇</span>
+            <strong>175 mg/dL</strong>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -723,16 +855,19 @@
     </div>
     <div class="page-content">
       <div class="card-box">
-        <div class="card-title">今日打卡清單</div>
+        <div class="card-title">今日服用打卡</div>
         <div style="display: flex; flex-direction: column; gap: 12px;">
           <label style="display: flex; align-items: center; gap: 10px; font-size: 15px;">
-            <input type="checkbox" style="width: 20px; height: 20px; accent-color: #F4ACB7;"> 🐟 頂級深海魚油 (飯後)
+            <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--pink-crayon);"> 🐟 深海魚油 (隨餐)
           </label>
           <label style="display: flex; align-items: center; gap: 10px; font-size: 15px;">
-            <input type="checkbox" style="width: 20px; height: 20px; accent-color: #F4ACB7;"> 👁️ 葉黃素護眼膠囊 (晨起)
+            <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--pink-crayon);"> 👁️ 葉黃素護眼膠囊 (晨起)
           </label>
           <label style="display: flex; align-items: center; gap: 10px; font-size: 15px;">
-            <input type="checkbox" style="width: 20px; height: 20px; accent-color: #F4ACB7;"> 🍋 維生素 C + 膠原蛋白
+            <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--pink-crayon);"> 🍋 緩釋維生素 C
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; font-size: 15px;">
+            <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--pink-crayon);"> 🥛 晚間睡前鈣鎂片
           </label>
         </div>
       </div>
@@ -748,9 +883,13 @@
     </div>
     <div class="page-content">
       <div class="card-box">
-        <div class="card-title">今日運動目標</div>
-        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;">伸展筋骨，傾聽身體的聲音 ✨</p>
-        <button class="btn-crayon-primary" style="background: linear-gradient(135deg, #D0F4DE, #B2EAC5); color: #1E4E30;" onclick="alert('打卡完成！真棒！')">瑜伽拉筋 30 分鐘 🧘‍♀️</button>
+        <div class="card-title">運動汗水紀錄</div>
+        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+          <button style="flex: 1; padding: 10px; border-radius: 14px; border: 1.5px solid #9DE0BA; background: #EDFAF2; font-weight: 700; color: #1E4E30;">🧘‍♀️ 瑜伽</button>
+          <button style="flex: 1; padding: 10px; border-radius: 14px; border: 1.5px solid #E2E8F0; background: white; font-weight: 700;">🚶‍♀️ 快走</button>
+          <button style="flex: 1; padding: 10px; border-radius: 14px; border: 1.5px solid #E2E8F0; background: white; font-weight: 700;">🏋️ 重訓</button>
+        </div>
+        <button class="btn-crayon-primary" style="background: linear-gradient(135deg, #D0F4DE, #B2EAC5); color: #1E4E30;" onclick="alert('打卡完成！真棒！')">完成運動 30 分鐘 ✨</button>
       </div>
     </div>
   </div>
@@ -764,7 +903,10 @@
     </div>
     <div class="page-content">
       <div class="card-box">
-        <div class="card-title">今日心情塗鴉</div>
+        <div class="card-title">今日心情氣象</div>
+        <div style="display: flex; justify-content: space-around; font-size: 26px; margin-bottom: 14px;">
+          <span>🥰</span><span>🌿</span><span>😴</span><span>🌧️</span><span>🍦</span>
+        </div>
         <textarea class="crayon-input" style="height: 120px; resize: none;" placeholder="寫下一點今天的小小感悟與微光..."></textarea>
         <button class="btn-crayon-primary" style="background: linear-gradient(135deg, #E8DFF5, #D2C4E9); color: #43315B; margin-top: 12px;" onclick="alert('心情已溫柔收進筆記本中')">珍藏日記 🌸</button>
       </div>
@@ -779,20 +921,33 @@
       <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
     </div>
     <div class="page-content">
+      <!-- 喝水補給視覺 -->
       <div class="card-box">
-        <div class="card-title">提醒開關</div>
+        <div class="card-title">💧 喝水補水進度（目標 2000 ml）</div>
+        <div class="water-row">
+          <span class="water-cup drank" onclick="toggleCup(this)">🥛</span>
+          <span class="water-cup drank" onclick="toggleCup(this)">🥛</span>
+          <span class="water-cup drank" onclick="toggleCup(this)">🥛</span>
+          <span class="water-cup" onclick="toggleCup(this)">🥛</span>
+          <span class="water-cup" onclick="toggleCup(this)">🥛</span>
+          <span class="water-cup" onclick="toggleCup(this)">🥛</span>
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div class="card-title">定時提醒設定</div>
         <div style="display: flex; flex-direction: column; gap: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>💧 每一小時喝水</span>
-            <input type="checkbox" checked style="width: 24px; height: 24px; accent-color: #FCD34D;">
+            <span>💧 每 1 小時喝水提示</span>
+            <input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #FCD34D;">
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>👀 用眼30分鐘抬頭休息</span>
-            <input type="checkbox" checked style="width: 24px; height: 24px; accent-color: #FCD34D;">
+            <span>👀 用眼 30 分鐘抬頭休息</span>
+            <input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #FCD34D;">
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>🩸 經期來訪前 3 天預報</span>
-            <input type="checkbox" checked style="width: 24px; height: 24px; accent-color: #FCD34D;">
+            <span>🩸 經期前 3 天預先通知</span>
+            <input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #FCD34D;">
           </div>
         </div>
       </div>
@@ -816,11 +971,52 @@
   </div>
 
   <script>
-    // 儲存狀態變數
     let selectedGender = "女";
     let selectedAvatarBase64 = "";
+    let selectedBirthday = "";
 
-    // 處理相簿選擇大頭貼
+    // 建立生日挑選器年份與月份
+    function initBirthdayPicker() {
+      const yearSel = document.getElementById('bday-year');
+      const monthSel = document.getElementById('bday-month');
+      const daySel = document.getElementById('bday-day');
+      
+      const currentYear = 2026;
+      for (let y = currentYear; y >= currentYear - 70; y--) {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = `${y} 年`;
+        if (y === 2000) opt.selected = true;
+        yearSel.appendChild(opt);
+      }
+      for (let m = 1; m <= 12; m++) {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = `${m} 月`;
+        monthSel.appendChild(opt);
+      }
+      for (let d = 1; d <= 31; d++) {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = `${d} 日`;
+        daySel.appendChild(opt);
+      }
+    }
+
+    function openBirthdayPicker() {
+      document.getElementById('birthday-modal').classList.add('show');
+    }
+
+    function confirmBirthday() {
+      const y = document.getElementById('bday-year').value;
+      const m = document.getElementById('bday-month').value.padStart(2, '0');
+      const d = document.getElementById('bday-day').value.padStart(2, '0');
+      selectedBirthday = `${y}-${m}-${d}`;
+      document.getElementById('bday-display').textContent = `${y} 年 ${m} 月 ${d} 日 🎂`;
+      document.getElementById('birthday-modal').classList.remove('show');
+    }
+
+    // 大頭貼
     const avatarInput = document.getElementById('avatar-file-input');
     avatarInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -836,12 +1032,9 @@
 
     function renderAvatar(src) {
       if (!src) return;
-      const preview = document.getElementById('setup-avatar-preview');
-      preview.innerHTML = `<img src="${src}" alt="avatar">`;
-      
+      document.getElementById('setup-avatar-preview').innerHTML = `<img src="${src}" alt="avatar">`;
       const dashAvatar = document.getElementById('dash-avatar-box');
       if (dashAvatar) dashAvatar.innerHTML = `<img src="${src}" alt="avatar">`;
-
       const sideAvatar = document.getElementById('sidebar-avatar-box');
       if (sideAvatar) sideAvatar.innerHTML = `<img src="${src}" alt="avatar">`;
     }
@@ -854,20 +1047,16 @@
 
     function completeSetup() {
       const name = document.getElementById('setup-name').value.trim();
-      const birth = document.getElementById('setup-birth').value;
-
       if (!name) {
         alert("請輸入可愛的暱稱喔 🌸");
         return;
       }
-
       const profile = {
         name: name,
-        birth: birth,
+        birth: selectedBirthday,
         gender: selectedGender,
         avatar: selectedAvatarBase64
       };
-
       localStorage.setItem('hd_user_profile', JSON.stringify(profile));
       loadDashboard(profile);
       navigateTo('dashboard-view');
@@ -876,10 +1065,7 @@
     function loadDashboard(profile) {
       document.getElementById('dash-greeting-text').textContent = `Hi ${profile.name}寶寶`;
       document.getElementById('sidebar-user-name').textContent = `${profile.name}寶寶`;
-
-      if (profile.avatar) {
-        renderAvatar(profile.avatar);
-      }
+      if (profile.avatar) renderAvatar(profile.avatar);
 
       const settingsInfo = document.getElementById('settings-info-text');
       if (settingsInfo) {
@@ -898,7 +1084,7 @@
       }
     }
 
-    // 換頁功能
+    // 換頁
     function navigateTo(viewId) {
       closeSidebar();
       document.querySelectorAll('.view-container').forEach(view => {
@@ -927,36 +1113,29 @@
 
     sidebarMask.addEventListener('click', closeSidebar);
 
-    // 手指往右滑（Swipe Right）滑出側邊選單、左滑關閉
+    // 手指滑動手勢
     let touchStartX = 0;
     let touchStartY = 0;
-
-    window.addEventListener('touchstart', function(e) {
+    window.addEventListener('touchstart', e => {
       touchStartX = e.changedTouches[0].screenX;
       touchStartY = e.changedTouches[0].screenY;
     }, { passive: true });
 
-    window.addEventListener('touchend', function(e) {
-      const touchEndX = e.changedTouches[0].screenX;
-      const touchEndY = e.changedTouches[0].screenY;
-      const diffX = touchEndX - touchStartX;
-      const diffY = touchEndY - touchStartY;
-
-      // 檢查是否主要是橫向滑動（X 位移大於 Y 位移）
+    window.addEventListener('touchend', e => {
+      const diffX = e.changedTouches[0].screenX - touchStartX;
+      const diffY = e.changedTouches[0].screenY - touchStartY;
       if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
-        // 從左向右滑 (從左側 70px 內開始或任何位置右滑)
-        if (diffX > 0 && touchStartX < 120) {
-          openSidebar();
-        } 
-        // 從右向左滑：收起選單
-        else if (diffX < 0 && sidebar.classList.contains('open')) {
-          closeSidebar();
-        }
+        if (diffX > 0 && touchStartX < 120) openSidebar();
+        else if (diffX < 0 && sidebar.classList.contains('open')) closeSidebar();
       }
     }, { passive: true });
 
-    // 初始化檢查是否已建立過帳戶
+    function toggleCup(el) {
+      el.classList.toggle('drank');
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+      initBirthdayPicker();
       const saved = localStorage.getItem('hd_user_profile');
       if (saved) {
         const profile = JSON.parse(saved);
