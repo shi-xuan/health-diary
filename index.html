@@ -17,14 +17,15 @@
       --pink-soft: #FFCAD4;
       --pink-crayon: #F4ACB7;
       --pink-dark: #D87D8A;
+      --pink-light: #FFE5EC;
       --green-soft: #D8E2DC;
-      --green-dark: #7A9E8F;
       --peach-soft: #FFE5D9;
       --purple-soft: #E8DFF5;
       --blue-soft: #D0F4DE;
       --yellow-soft: #FFF1BD;
       --text-main: #5D5452;
       --text-muted: #8F8583;
+      --crayon-border: #E8C2B9;
       --card-shadow: 0 4px 14px rgba(184, 155, 150, 0.15);
     }
 
@@ -33,7 +34,7 @@
       -webkit-tap-highlight-color: transparent;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "Comic Sans MS", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC", "Microsoft JhengHei", sans-serif;
     }
 
     body {
@@ -45,10 +46,10 @@
     }
 
     .safe-top {
-      padding-top: env(safe-area-inset-top, 20px);
+      padding-top: env(safe-area-inset-top, 24px);
     }
     .safe-bottom {
-      padding-bottom: env(safe-area-inset-bottom, 20px);
+      padding-bottom: env(safe-area-inset-bottom, 24px);
     }
 
     /* 容器架構 */
@@ -57,37 +58,37 @@
       min-height: 100vh;
       width: 100%;
       flex-direction: column;
-      animation: fadeIn 0.2s ease-out;
+      animation: fadeIn 0.22s ease-out;
     }
     .view-container.active {
       display: flex;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+      from { opacity: 0; transform: translateY(5px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     /* ====== 畫面 1：首次建立帳戶 ====== */
     #setup-view {
-      padding: 30px 20px;
+      padding: 30px 22px;
       justify-content: center;
       align-items: center;
     }
 
     .setup-card {
       background: #FFFFFF;
-      border: 3px dashed var(--pink-crayon);
+      border: 2px dashed var(--pink-crayon);
       border-radius: 32px;
-      padding: 28px 22px;
+      padding: 30px 22px;
       width: 100%;
       max-width: 380px;
-      box-shadow: 0 8px 24px rgba(244, 172, 183, 0.25);
+      box-shadow: var(--card-shadow);
       text-align: center;
     }
 
     .setup-title {
-      font-size: 22px;
+      font-size: 23px;
       font-weight: 800;
       color: var(--pink-dark);
       margin-bottom: 6px;
@@ -109,7 +110,6 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      object-fit: cover;
       border: 3px solid var(--pink-soft);
       background-color: var(--peach-soft);
       box-shadow: 0 4px 10px rgba(244, 172, 183, 0.35);
@@ -136,12 +136,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 14px;
       border: 2px solid white;
       box-shadow: 0 2px 5px rgba(0,0,0,0.15);
       cursor: pointer;
     }
-    #avatar-file-input { display: none; }
+    .hidden-file-input { display: none; }
 
     .form-group {
       text-align: left;
@@ -151,7 +151,7 @@
     .form-group label {
       display: block;
       font-size: 13.5px;
-      font-weight: 800;
+      font-weight: 700;
       margin-bottom: 7px;
       color: #6C5E5B;
     }
@@ -187,7 +187,7 @@
       border: 2px solid #F1D4CD;
       background: #FFFDF9;
       font-size: 13.5px;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--text-main);
       cursor: pointer;
       text-align: center;
@@ -253,7 +253,14 @@
     .dash-greeting {
       font-size: 20px;
       font-weight: 800;
-      color: #4A3E3D;
+      color: var(--text-main); /* 還原第一版顏色 */
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dash-greeting .heart-icon {
+      color: #F4ACB7;
+      font-size: 18px;
     }
     .dash-tagline {
       font-size: 12px;
@@ -292,7 +299,7 @@
       border-radius: 4px;
     }
 
-    /* ====== 核心：還原第一版 6 本手繪活頁本樣式 ====== */
+    /* ====== 6 本日誌本：還原第一版邊框與質感＋保留孔洞 ====== */
     .books-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -303,21 +310,20 @@
       position: relative;
       border-radius: 20px;
       padding: 16px 14px 16px 28px;
-      min-height: 138px;
+      min-height: 136px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       cursor: pointer;
-      box-shadow: 0 6px 16px rgba(184, 155, 150, 0.18), inset 0 0 0 1.5px rgba(255, 255, 255, 0.6);
+      box-shadow: var(--card-shadow);
       transition: transform 0.12s, box-shadow 0.12s;
       overflow: hidden;
-      background-size: 100% 100%;
     }
     .notebook-card:active {
       transform: scale(0.97);
     }
 
-    /* 左側書脊裝訂邊帶與打孔環 */
+    /* 書脊打孔裝訂邊 */
     .notebook-card::before {
       content: '';
       position: absolute;
@@ -335,26 +341,25 @@
       height: 12px;
       background: #FFFFFF;
       border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.22);
     }
-    .ring-1 { top: 22px; }
+    .ring-1 { top: 20px; }
     .ring-2 { top: calc(50% - 6px); }
-    .ring-3 { bottom: 22px; }
+    .ring-3 { bottom: 20px; }
 
-    /* 6 本書個別粉彩配色 */
-    .book-period { background: linear-gradient(135deg, #FFE8EE, #FFCAD4); border: 2px solid #F4ACB7; }
-    .book-report { background: linear-gradient(135deg, #EEF6F3, #D8E2DC); border: 2px solid #ADC5BA; }
-    .book-supple { background: linear-gradient(135deg, #FFF5ED, #FFE5D9); border: 2px solid #F5C6AA; }
-    .book-sport  { background: linear-gradient(135deg, #EDFAF2, #D0F4DE); border: 2px solid #9DE0BA; }
-    .book-diary  { background: linear-gradient(135deg, #F6F0FA, #E8DFF5); border: 2px solid #D0BBE5; }
-    .book-alarm  { background: linear-gradient(135deg, #FFFCEB, #FFEAA7); border: 2px solid #F9D56E; }
+    /* 6 本書第一版邊框手繪風格 */
+    .book-period { background: linear-gradient(145deg, #FFE5EC, #FFCAD4); border: 2px solid #F4ACB7; }
+    .book-report { background: linear-gradient(145deg, #EBF4F6, #D8E2DC); border: 2px solid #A8C9B9; }
+    .book-supple { background: linear-gradient(145deg, #FFF1E6, #FFE5D9); border: 2px solid #F7C59F; }
+    .book-sport  { background: linear-gradient(145deg, #E8F8F5, #D0F4DE); border: 2px solid #99E2B4; }
+    .book-diary  { background: linear-gradient(145deg, #F3EAF8, #E8DFF5); border: 2px solid #CDB4DB; }
+    .book-alarm  { background: linear-gradient(145deg, #FFF7D6, #FFEAA7); border: 2px solid #FCD34D; }
 
     .notebook-icon {
       font-size: 32px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
     }
     .notebook-title {
-      font-size: 16px;
+      font-size: 16.5px;
       font-weight: 800;
       color: #4A3E3D;
       margin-top: 6px;
@@ -365,7 +370,7 @@
       margin-top: 2px;
     }
 
-    /* ====== 側邊選單 (Drawer) ====== */
+    /* ====== 側邊選單 (2/3 寬度) ====== */
     .sidebar-mask {
       position: fixed;
       top: 0;
@@ -403,7 +408,7 @@
       transform: translateX(0);
     }
     .sidebar-header {
-      padding: calc(env(safe-area-inset-top, 20px) + 20px) 18px 18px 18px;
+      padding: calc(env(safe-area-inset-top, 24px) + 16px) 18px 18px 18px;
       background: linear-gradient(135deg, #FFE5EC, #FFFDF9);
       border-bottom: 2px dashed #E8D3CE;
       display: flex;
@@ -497,37 +502,33 @@
       gap: 8px;
     }
 
-    /* ====== 生日可愛手繪彈窗 ====== */
-    .birthday-modal {
+    /* ====== 可愛生日彈窗 ====== */
+    .modal-backdrop {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.45);
       z-index: 1000;
       display: none;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
-    .birthday-modal.show { display: flex; }
-    .bday-dialog {
+    .modal-backdrop.show { display: flex; }
+    .crayon-modal {
       background: #FFFDF9;
       border: 3px solid var(--pink-crayon);
       border-radius: 28px;
       padding: 22px;
       width: 100%;
       max-width: 340px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
       text-align: center;
     }
-    .bday-title { font-size: 18px; font-weight: 800; color: var(--pink-dark); margin-bottom: 14px; }
-    .bday-selectors {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
-    }
+    .modal-title { font-size: 18px; font-weight: 800; color: var(--pink-dark); margin-bottom: 14px; }
+    .bday-selectors { display: flex; gap: 8px; margin-bottom: 18px; }
     .bday-select {
       flex: 1;
       padding: 10px;
@@ -535,7 +536,7 @@
       border: 2px solid #F1D4CD;
       background: white;
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 600;
       color: #5D5452;
       outline: none;
     }
@@ -557,12 +558,10 @@
       justify-content: center;
       font-size: 12px;
       font-weight: 700;
-      border: 1px solid transparent;
       color: #5D5452;
     }
     .cal-day.period { background: #FFAAA6; color: white; border-radius: 50%; }
     .cal-day.ovulation { background: #D0F4DE; color: #1E4E30; border: 1px dashed #7AD8A6; }
-    .cal-day.predict { background: #FFE5EC; color: #C2596C; }
 
     /* ====== 喝水進度杯視覺 ====== */
     .water-row {
@@ -577,6 +576,31 @@
       transition: transform 0.15s, opacity 0.15s;
     }
     .water-cup.drank { opacity: 1; transform: scale(1.1); }
+
+    /* 設定頁面按鈕 */
+    .btn-secondary {
+      width: 100%;
+      padding: 13px;
+      background: #FFFFFF;
+      border: 2px solid var(--pink-soft);
+      border-radius: 18px;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #8C4755;
+      cursor: pointer;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-secondary:active { background: #FFF5F7; }
+    .btn-danger {
+      border-color: #FFAAA6;
+      color: #D9383A;
+      background: #FFFBFB;
+    }
+    .btn-danger:active { background: #FFEBEB; }
   </style>
 </head>
 <body class="safe-top safe-bottom">
@@ -615,21 +639,54 @@
     </div>
     <div class="sidebar-footer">
       <div class="sidebar-item" onclick="navigateTo('view-settings')">
-        <span>⚙️</span> 系統設定
+        <span>⚙️️</span> 系統設定
       </div>
     </div>
   </nav>
 
   <!-- 可愛生日挑選器彈窗 -->
-  <div id="birthday-modal" class="birthday-modal">
-    <div class="bday-dialog">
-      <div class="bday-title">🎂 選擇出生年月日</div>
+  <div id="birthday-modal" class="modal-backdrop">
+    <div class="crayon-modal">
+      <div class="modal-title">🎂 選擇出生年月日</div>
       <div class="bday-selectors">
         <select id="bday-year" class="bday-select"></select>
         <select id="bday-month" class="bday-select"></select>
         <select id="bday-day" class="bday-select"></select>
       </div>
       <button class="btn-crayon-primary" onclick="confirmBirthday()">選好囉 ✨</button>
+    </div>
+  </div>
+
+  <!-- 修改個人檔案彈窗（非重設） -->
+  <div id="edit-profile-modal" class="modal-backdrop">
+    <div class="crayon-modal" style="max-width: 360px;">
+      <div class="modal-title">✏️ 修改個人檔案</div>
+      <div class="avatar-picker-wrap" onclick="document.getElementById('edit-avatar-input').click()">
+        <div class="avatar-preview" id="edit-avatar-preview"><span>🌸</span></div>
+        <div class="avatar-camera-btn">📷</div>
+      </div>
+      <input type="file" id="edit-avatar-input" class="hidden-file-input" accept="image/*">
+
+      <div class="form-group">
+        <label>暱稱</label>
+        <input type="text" id="edit-name" class="crayon-input">
+      </div>
+      <div class="form-group">
+        <label>生日</label>
+        <div class="crayon-input" id="edit-bday-display" onclick="openBirthdayPicker(true)">點擊設定生日 🎂</div>
+      </div>
+      <div class="form-group">
+        <label>性別</label>
+        <div class="gender-chips">
+          <div class="gender-chip-btn" id="edit-gender-female" onclick="selectEditGender('女')">女生 🌸</div>
+          <div class="gender-chip-btn" id="edit-gender-male" onclick="selectEditGender('男')">男生 🌱</div>
+          <div class="gender-chip-btn" id="edit-gender-secret" onclick="selectEditGender('秘')">保密 🌿</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 14px;">
+        <button class="btn-secondary" style="flex: 1;" onclick="closeEditModal()">取消</button>
+        <button class="btn-crayon-primary" style="flex: 1.5; margin-top: 0;" onclick="saveEditedProfile()">儲存變更</button>
+      </div>
     </div>
   </div>
 
@@ -642,7 +699,7 @@
         </div>
         <div class="avatar-camera-btn">📷</div>
       </div>
-      <input type="file" id="avatar-file-input" accept="image/*">
+      <input type="file" id="avatar-file-input" class="hidden-file-input" accept="image/*">
 
       <h1 class="setup-title">開啟Health-diary守護你</h1>
       <p class="setup-subtitle">打開健康日誌 照顧好自己</p>
@@ -654,7 +711,7 @@
 
       <div class="form-group">
         <label>你的生日</label>
-        <div class="crayon-input" id="bday-display" onclick="openBirthdayPicker()">點擊選擇生日 🎂</div>
+        <div class="crayon-input" id="bday-display" onclick="openBirthdayPicker(false)">點擊選擇生日 🎂</div>
       </div>
 
       <div class="form-group">
@@ -676,7 +733,11 @@
       <div class="dash-profile">
         <div class="dash-avatar" id="dash-avatar-box">🌸</div>
         <div class="dash-welcome">
-          <div class="dash-greeting" id="dash-greeting-text">Hi 寶寶</div>
+          <!-- 暱稱還原第一版色調＋加愛心 -->
+          <div class="dash-greeting">
+            <span id="dash-greeting-text">Hi 寶寶</span>
+            <span class="heart-icon">💕</span>
+          </div>
           <div class="dash-tagline">今天也要好好照顧身體喔 🌱</div>
         </div>
       </div>
@@ -685,7 +746,7 @@
 
     <div class="section-headline">我的Health-diary</div>
 
-    <!-- 6 本第一版活頁裝訂筆記本 -->
+    <!-- 6 本書（第一版邊框手繪風格＋保留孔洞） -->
     <div class="books-grid">
       <!-- 1. 生理期 -->
       <div class="notebook-card book-period" onclick="navigateTo('view-period')">
@@ -772,7 +833,7 @@
       <div class="card-box">
         <div class="card-title">📅 本月週期推算日曆</div>
         <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">
-          ● 粉紅：月經期 ● 淺綠：排卵危險期 ● 虛線：預測日
+          ● 粉紅：月經期 ● 淺綠：排卵危險期
         </p>
         <div class="calendar-grid">
           <div class="cal-header">日</div><div class="cal-header">一</div><div class="cal-header">二</div>
@@ -810,7 +871,6 @@
       <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
     </div>
     <div class="page-content">
-      <!-- 視力專區 -->
       <div class="card-box">
         <div class="card-title">👀 視力追蹤專區</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
@@ -921,7 +981,6 @@
       <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
     </div>
     <div class="page-content">
-      <!-- 喝水補給視覺 -->
       <div class="card-box">
         <div class="card-title">💧 喝水補水進度（目標 2000 ml）</div>
         <div class="water-row">
@@ -962,20 +1021,49 @@
       <button class="header-btn" onclick="navigateTo('dashboard-view')">✕</button>
     </div>
     <div class="page-content">
+      <!-- 1. 個人檔案概覽與修改 -->
       <div class="card-box">
-        <div class="card-title">個人檔案</div>
-        <p id="settings-info-text" style="font-size: 14px; color: var(--text-muted); line-height: 1.8;"></p>
-        <button class="btn-crayon-primary" style="margin-top: 14px; background: #FFF; border: 2px solid var(--pink-soft); color: #C2596C;" onclick="resetProfile()">重設個人檔案</button>
+        <div class="card-title">👤 個人檔案</div>
+        <p id="settings-info-text" style="font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 12px;"></p>
+        <button class="btn-secondary" onclick="openEditModal()">✏️ 修改個人檔案</button>
+      </div>
+
+      <!-- 2. 資料備份與還原 -->
+      <div class="card-box">
+        <div class="card-title">💾 資料備份與還原</div>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">
+          所有紀錄皆保存在您的手機本機中。建議定期匯出備份，避免清除瀏覽器快取時遺失。
+        </p>
+        <button class="btn-secondary" onclick="exportDataBackup()">📤 匯出 JSON 備份檔</button>
+        <button class="btn-secondary" onclick="document.getElementById('import-file-input').click()">📥 匯入 JSON 備份檔</button>
+        <input type="file" id="import-file-input" class="hidden-file-input" accept=".json" onchange="importDataBackup(event)">
+      </div>
+
+      <!-- 3. 刪除資料危險區（嚴謹提示） -->
+      <div class="card-box" style="border-color: #FFCAD4;">
+        <div class="card-title" style="color: #D9383A;">⚠️ 危險區域</div>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+          此操作將徹底清空手機內儲存的個人檔案、月經日記、視力及所有健康紀錄，無法復原。
+        </p>
+        <button class="btn-secondary btn-danger" onclick="confirmDeleteAllData()">🗑️ 刪除全部資料</button>
       </div>
     </div>
   </div>
 
   <script>
-    let selectedGender = "女";
-    let selectedAvatarBase64 = "";
-    let selectedBirthday = "";
+    // 狀態變數
+    let currentProfile = {
+      name: "",
+      birth: "",
+      gender: "女",
+      avatar: ""
+    };
+    let isEditing = false;
+    let tempEditAvatar = "";
+    let tempEditGender = "女";
+    let tempEditBirthday = "";
 
-    // 建立生日挑選器年份與月份
+    // 建立生日挑選器選項
     function initBirthdayPicker() {
       const yearSel = document.getElementById('bday-year');
       const monthSel = document.getElementById('bday-month');
@@ -1003,7 +1091,8 @@
       }
     }
 
-    function openBirthdayPicker() {
+    function openBirthdayPicker(editing = false) {
+      isEditing = editing;
       document.getElementById('birthday-modal').classList.add('show');
     }
 
@@ -1011,38 +1100,53 @@
       const y = document.getElementById('bday-year').value;
       const m = document.getElementById('bday-month').value.padStart(2, '0');
       const d = document.getElementById('bday-day').value.padStart(2, '0');
-      selectedBirthday = `${y}-${m}-${d}`;
-      document.getElementById('bday-display').textContent = `${y} 年 ${m} 月 ${d} 日 🎂`;
+      const formatted = `${y}-${m}-${d}`;
+      const displayText = `${y} 年 ${m} 月 ${d} 日 🎂`;
+
+      if (isEditing) {
+        tempEditBirthday = formatted;
+        document.getElementById('edit-bday-display').textContent = displayText;
+      } else {
+        currentProfile.birth = formatted;
+        document.getElementById('bday-display').textContent = displayText;
+      }
       document.getElementById('birthday-modal').classList.remove('show');
     }
 
-    // 大頭貼
-    const avatarInput = document.getElementById('avatar-file-input');
-    avatarInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          selectedAvatarBase64 = event.target.result;
-          renderAvatar(selectedAvatarBase64);
-        };
-        reader.readAsDataURL(file);
-      }
+    // 首次設定大頭貼監聽
+    document.getElementById('avatar-file-input').addEventListener('change', function(e) {
+      handleAvatarFile(e.target.files[0], (base64) => {
+        currentProfile.avatar = base64;
+        document.getElementById('setup-avatar-preview').innerHTML = `<img src="${base64}" alt="avatar">`;
+      });
     });
 
-    function renderAvatar(src) {
-      if (!src) return;
-      document.getElementById('setup-avatar-preview').innerHTML = `<img src="${src}" alt="avatar">`;
-      const dashAvatar = document.getElementById('dash-avatar-box');
-      if (dashAvatar) dashAvatar.innerHTML = `<img src="${src}" alt="avatar">`;
-      const sideAvatar = document.getElementById('sidebar-avatar-box');
-      if (sideAvatar) sideAvatar.innerHTML = `<img src="${src}" alt="avatar">`;
+    // 修改大頭貼監聽
+    document.getElementById('edit-avatar-input').addEventListener('change', function(e) {
+      handleAvatarFile(e.target.files[0], (base64) => {
+        tempEditAvatar = base64;
+        document.getElementById('edit-avatar-preview').innerHTML = `<img src="${base64}" alt="avatar">`;
+      });
+    });
+
+    function handleAvatarFile(file, callback) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => callback(e.target.result);
+      reader.readAsDataURL(file);
     }
 
     function selectGender(el, gender) {
-      document.querySelectorAll('.gender-chip-btn').forEach(btn => btn.classList.remove('selected'));
+      document.querySelectorAll('#setup-view .gender-chip-btn').forEach(btn => btn.classList.remove('selected'));
       el.classList.add('selected');
-      selectedGender = gender;
+      currentProfile.gender = gender;
+    }
+
+    function selectEditGender(gender) {
+      tempEditGender = gender;
+      document.getElementById('edit-gender-female').classList.toggle('selected', gender === '女');
+      document.getElementById('edit-gender-male').classList.toggle('selected', gender === '男');
+      document.getElementById('edit-gender-secret').classList.toggle('selected', gender === '秘');
     }
 
     function completeSetup() {
@@ -1051,36 +1155,123 @@
         alert("請輸入可愛的暱稱喔 🌸");
         return;
       }
-      const profile = {
-        name: name,
-        birth: selectedBirthday,
-        gender: selectedGender,
-        avatar: selectedAvatarBase64
-      };
-      localStorage.setItem('hd_user_profile', JSON.stringify(profile));
-      loadDashboard(profile);
+      currentProfile.name = name;
+      localStorage.setItem('hd_user_profile', JSON.stringify(currentProfile));
+      loadDashboard(currentProfile);
       navigateTo('dashboard-view');
     }
 
     function loadDashboard(profile) {
+      currentProfile = profile;
       document.getElementById('dash-greeting-text').textContent = `Hi ${profile.name}寶寶`;
       document.getElementById('sidebar-user-name').textContent = `${profile.name}寶寶`;
-      if (profile.avatar) renderAvatar(profile.avatar);
+
+      renderAllAvatars(profile.avatar);
 
       const settingsInfo = document.getElementById('settings-info-text');
       if (settingsInfo) {
         settingsInfo.innerHTML = `
-          暱稱：${profile.name}<br>
-          生日：${profile.birth || '未設定'}<br>
-          性別：${profile.gender}
+          <strong>暱稱：</strong>${profile.name}<br>
+          <strong>生日：</strong>${profile.birth || '未設定'}<br>
+          <strong>性別：</strong>${profile.gender}
         `;
       }
     }
 
-    function resetProfile() {
-      if (confirm("確定要重設個人檔案嗎？")) {
-        localStorage.removeItem('hd_user_profile');
+    function renderAllAvatars(src) {
+      const content = src ? `<img src="${src}" alt="avatar">` : `🌸`;
+      document.getElementById('dash-avatar-box').innerHTML = content;
+      document.getElementById('sidebar-avatar-box').innerHTML = content;
+    }
+
+    // ====== 修改個人檔案彈窗邏輯 ======
+    function openEditModal() {
+      tempEditAvatar = currentProfile.avatar;
+      tempEditGender = currentProfile.gender || '女';
+      tempEditBirthday = currentProfile.birth || '';
+
+      document.getElementById('edit-name').value = currentProfile.name;
+      document.getElementById('edit-avatar-preview').innerHTML = tempEditAvatar ? `<img src="${tempEditAvatar}">` : `🌸`;
+      document.getElementById('edit-bday-display').textContent = tempEditBirthday ? `${tempEditBirthday} 🎂` : '點擊設定生日 🎂';
+      selectEditGender(tempEditGender);
+
+      document.getElementById('edit-profile-modal').classList.add('show');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-profile-modal').classList.remove('show');
+    }
+
+    function saveEditedProfile() {
+      const newName = document.getElementById('edit-name').value.trim();
+      if (!newName) {
+        alert("暱稱不能為空喔！🌸");
+        return;
+      }
+      currentProfile.name = newName;
+      currentProfile.avatar = tempEditAvatar;
+      currentProfile.gender = tempEditGender;
+      currentProfile.birth = tempEditBirthday;
+
+      localStorage.setItem('hd_user_profile', JSON.stringify(currentProfile));
+      loadDashboard(currentProfile);
+      closeEditModal();
+      alert("個人檔案已更新成功 ✨");
+    }
+
+    // ====== 資料備份：匯出 JSON ======
+    function exportDataBackup() {
+      const exportData = {
+        profile: currentProfile,
+        exportDate: new Date().toISOString(),
+        version: "1.0",
+        app: "Health-diary"
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `health_diary_backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // ====== 資料還原：匯入 JSON ======
+    function importDataBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.profile) {
+            localStorage.setItem('hd_user_profile', JSON.stringify(imported.profile));
+            alert("備份資料匯入成功！即將為您重新載入 ✨");
+            location.reload();
+          } else {
+            alert("匯入失敗：備份檔格式不符。");
+          }
+        } catch (err) {
+          alert("解析備份檔時發生錯誤，請確認檔案格式是否正確。");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ====== 刪除全部資料（嚴謹提示防呆） ======
+    function confirmDeleteAllData() {
+      const step1 = confirm("⚠️ 警告：此操作將徹底清空您所有的健康數據、個人檔案與所有日記，且無法復原！\n\n確定要繼續嗎？");
+      if (!step1) return;
+
+      const promptInput = prompt("為避免誤觸，請在下方輸入「確認刪除」四個字以抹除資料：");
+      if (promptInput === "確認刪除") {
+        localStorage.clear();
+        alert("所有資料已全數清除，應用程式即將重新啟動。");
         location.reload();
+      } else {
+        alert("文字輸入不符，已安全取消刪除動作。🌱");
       }
     }
 
@@ -1097,7 +1288,7 @@
       }
     }
 
-    // 側邊選單手勢與開關
+    // 側邊選單開關
     const sidebar = document.getElementById('sidebar');
     const sidebarMask = document.getElementById('sidebar-mask');
 
@@ -1138,9 +1329,13 @@
       initBirthdayPicker();
       const saved = localStorage.getItem('hd_user_profile');
       if (saved) {
-        const profile = JSON.parse(saved);
-        loadDashboard(profile);
-        navigateTo('dashboard-view');
+        try {
+          const profile = JSON.parse(saved);
+          loadDashboard(profile);
+          navigateTo('dashboard-view');
+        } catch(e) {
+          navigateTo('setup-view');
+        }
       } else {
         navigateTo('setup-view');
       }
